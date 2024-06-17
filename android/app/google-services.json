@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "963986867080",
+    "project_id": "invia-assinador-a3316",
+    "storage_bucket": "invia-assinador-a3316.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:963986867080:android:b3a8aedc570d384a20303d",
+        "android_client_info": {
+          "package_name": "com.assinador.invia.br"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASrHaXs1AAI70JdfnzWTiNBlQDxg4mmsY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
