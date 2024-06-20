@@ -49,6 +49,11 @@ dependencies:
   firebase_messaging: ^15.0.1
   firebase_crashlytics: ^4.0.1
   muskey: ^1.0.2
+  file_picker: ^8.0.5
+  extended_image: ^8.2.1
+  image_editor: ^1.5.1
+  shared_preferences: ^2.2.3
+  flutter_expandable_fab: ^2.0.0
 
 dev_dependencies:
   flutter_test:
