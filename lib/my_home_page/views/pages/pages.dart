@@ -17,11 +17,8 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   int _currentIndex = 0;
-  String _groupValueStatus = "";
-  String _groupValueData = "";
-  List<Map<String, dynamic>>? _filter;
   late List<Widget> _pages;
-  MyHomePageController _myHomePageController = MyHomePageController();
+  MyHomePageController _myHomePageController = MyHomePageController.instance;
 
   @override
   void didChangeDependencies() {
@@ -86,370 +83,327 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                   ),
                                 ),
                               )
-                            : Builder(builder: (context) {
-                                return IconButton(
-                                  onPressed: () async {
-                                    await showModalBottomSheet(
-                                      context: context,
-                                      builder: (context) => StatefulBuilder(
-                                          builder: (context, builder) {
-                                        return BottomSheet(
-                                          animationController:
-                                              AnimationController(vsync: this),
-                                          onClosing: () {},
-                                          builder: (context) =>
-                                              SingleChildScrollView(
-                                            child: Container(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height /
-                                                  2,
-                                              width: double.infinity,
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  Expanded(
-                                                    flex: 2,
-                                                    child: Center(
-                                                      child: Text(
-                                                        "Filtros",
-                                                        style:
-                                                            GoogleFonts.nunito(
-                                                          fontSize: 22.sp,
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                        ),
+                            : IconButton(
+                                onPressed: () async {
+                                  await showModalBottomSheet(
+                                    isScrollControlled: true,
+                                    context: context,
+                                    builder: (context) => StatefulBuilder(
+                                        builder: (context, builder) {
+                                      return DraggableScrollableSheet(
+                                        expand: false,
+                                        initialChildSize: 0.9,
+                                        minChildSize: 0.5,
+                                        maxChildSize: 1.0,
+                                        builder: (context, controller) =>
+                                            Container(
+                                          height: MediaQuery.of(context)
+                                              .size
+                                              .height,
+                                          width: double.infinity,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Expanded(
+                                                flex: 2,
+                                                child: Center(
+                                                  child: Text(
+                                                    "Filtros",
+                                                    style: GoogleFonts.nunito(
+                                                      fontSize: 22.sp,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 12,
+                                                child: ListView(
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 24.r),
+                                                  children: [
+                                                    Text(
+                                                      "Status",
+                                                      style: GoogleFonts.nunito(
+                                                        fontSize: 22.sp,
+                                                        fontWeight:
+                                                            FontWeight.w700,
                                                       ),
                                                     ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 12,
-                                                    child: ListView(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 24.r),
+                                                    Column(
                                                       children: [
-                                                        Text(
-                                                          "Status",
-                                                          style: GoogleFonts
-                                                              .nunito(
-                                                            fontSize: 22.sp,
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                          ),
+                                                        RadioListTile.adaptive(
+                                                          title: Text(
+                                                              "Todos os documentos"),
+                                                          groupValue:
+                                                              _myHomePageController
+                                                                  .groupValueStatus,
+                                                          value:
+                                                              "Todos os documentos",
+                                                          onChanged:
+                                                              (selected) {
+                                                            builder(() =>
+                                                                _myHomePageController
+                                                                    .changeStatusFilter(
+                                                                        selected!));
+                                                          },
                                                         ),
-                                                        Column(
-                                                          children: [
-                                                            RadioListTile
-                                                                .adaptive(
-                                                              title: Text(
-                                                                  "Todos os acordos"),
-                                                              groupValue:
-                                                                  _groupValueStatus,
-                                                              value: "Todos",
-                                                              onChanged:
-                                                                  (selected) {
-                                                                builder(() =>
-                                                                    _groupValueStatus =
-                                                                        selected!);
-                                                              },
-                                                            ),
-                                                            RadioListTile
-                                                                .adaptive(
-                                                              title: Text(
-                                                                  "Downloads"),
-                                                              groupValue:
-                                                                  _groupValueStatus,
-                                                              value:
-                                                                  "Downloads",
-                                                              onChanged:
-                                                                  (selected) {
-                                                                builder(() =>
-                                                                    _groupValueStatus =
-                                                                        selected!);
-                                                              },
-                                                            ),
-                                                            RadioListTile
-                                                                .adaptive(
-                                                              title: Text(
-                                                                  "Ação necessária"),
-                                                              groupValue:
-                                                                  _groupValueStatus,
-                                                              value: "Ação",
-                                                              onChanged:
-                                                                  (selected) {
-                                                                builder(() =>
-                                                                    _groupValueStatus =
-                                                                        selected!);
-                                                              },
-                                                            ),
-                                                            RadioListTile
-                                                                .adaptive(
-                                                              title: Text(
-                                                                  "Aguardando outros"),
-                                                              groupValue:
-                                                                  _groupValueStatus,
-                                                              value:
-                                                                  "Aguardando",
-                                                              onChanged:
-                                                                  (selected) {
-                                                                builder(() =>
-                                                                    _groupValueStatus =
-                                                                        selected!);
-                                                              },
-                                                            ),
-                                                            RadioListTile
-                                                                .adaptive(
-                                                              title: Text(
-                                                                  "Concluído"),
-                                                              groupValue:
-                                                                  _groupValueStatus,
-                                                              value:
-                                                                  "Concluído",
-                                                              onChanged:
-                                                                  (selected) {
-                                                                builder(() =>
-                                                                    _groupValueStatus =
-                                                                        selected!);
-                                                              },
-                                                            ),
-                                                            RadioListTile
-                                                                .adaptive(
-                                                              title: Text(
-                                                                  "Rascunho"),
-                                                              groupValue:
-                                                                  _groupValueStatus,
-                                                              value: "Rascunho",
-                                                              onChanged:
-                                                                  (selected) {
-                                                                builder(() =>
-                                                                    _groupValueStatus =
-                                                                        selected!);
-                                                              },
-                                                            ),
-                                                            RadioListTile
-                                                                .adaptive(
-                                                              title: Text(
-                                                                  "Cancelado"),
-                                                              groupValue:
-                                                                  _groupValueStatus,
-                                                              value:
-                                                                  "Cancelado",
-                                                              onChanged:
-                                                                  (selected) {
-                                                                builder(() =>
-                                                                    _groupValueStatus =
-                                                                        selected!);
-                                                              },
-                                                            ),
-                                                          ],
+                                                        RadioListTile.adaptive(
+                                                          title: Text(
+                                                              "Finalizados"),
+                                                          groupValue:
+                                                              _myHomePageController
+                                                                  .groupValueStatus,
+                                                          value: "Finalizados",
+                                                          onChanged:
+                                                              (selected) {
+                                                            builder(() =>
+                                                                _myHomePageController
+                                                                    .changeStatusFilter(
+                                                                        selected!));
+                                                          },
                                                         ),
-                                                        Text(
-                                                          "Data",
-                                                          style: GoogleFonts
-                                                              .nunito(
-                                                            fontSize: 22.sp,
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                          ),
+                                                        RadioListTile.adaptive(
+                                                          title:
+                                                              Text("Pendentes"),
+                                                          groupValue:
+                                                              _myHomePageController
+                                                                  .groupValueStatus,
+                                                          value: "Pendentes",
+                                                          onChanged:
+                                                              (selected) {
+                                                            builder(() =>
+                                                                _myHomePageController
+                                                                    .changeStatusFilter(
+                                                                        selected!));
+                                                          },
                                                         ),
-                                                        Column(
-                                                          children: [
-                                                            RadioListTile
-                                                                .adaptive(
-                                                              title:
-                                                                  Text("Todos"),
-                                                              value: "todos",
-                                                              groupValue:
-                                                                  _groupValueData,
-                                                              onChanged:
-                                                                  (selected) {
-                                                                builder(() =>
-                                                                    _groupValueData =
-                                                                        selected!);
-                                                              },
-                                                            ),
-                                                            RadioListTile
-                                                                .adaptive(
-                                                              title: Text(
-                                                                  "Últimos 12 meses"),
-                                                              value: "12 meses",
-                                                              groupValue:
-                                                                  _groupValueData,
-                                                              onChanged:
-                                                                  (selected) {
-                                                                builder(() =>
-                                                                    _groupValueData =
-                                                                        selected!);
-                                                              },
-                                                            ),
-                                                            RadioListTile
-                                                                .adaptive(
-                                                              title: Text(
-                                                                  "Últimos 6 meses"),
-                                                              value: "6 meses",
-                                                              groupValue:
-                                                                  _groupValueData,
-                                                              onChanged:
-                                                                  (selected) {
-                                                                builder(() =>
-                                                                    _groupValueData =
-                                                                        selected!);
-                                                              },
-                                                            ),
-                                                            RadioListTile
-                                                                .adaptive(
-                                                              title: Text(
-                                                                  "Últimos 30 dias"),
-                                                              value: "30 dias",
-                                                              groupValue:
-                                                                  _groupValueData,
-                                                              onChanged:
-                                                                  (selected) {
-                                                                builder(() =>
-                                                                    _groupValueData =
-                                                                        selected!);
-                                                              },
-                                                            ),
-                                                            RadioListTile
-                                                                .adaptive(
-                                                              title: Text(
-                                                                  "Semana passada"),
-                                                              value:
-                                                                  "semana passada",
-                                                              groupValue:
-                                                                  _groupValueData,
-                                                              onChanged:
-                                                                  (selected) {
-                                                                builder(() =>
-                                                                    _groupValueData =
-                                                                        selected!);
-                                                              },
-                                                            ),
-                                                            RadioListTile
-                                                                .adaptive(
-                                                              title: Text(
-                                                                  "Últimas 24 horas"),
-                                                              value: "24 horas",
-                                                              groupValue:
-                                                                  _groupValueData,
-                                                              onChanged:
-                                                                  (selected) {
-                                                                builder(() =>
-                                                                    _groupValueData =
-                                                                        selected!);
-                                                              },
-                                                            ),
-                                                          ],
-                                                        )
+                                                        RadioListTile.adaptive(
+                                                          title: Text(
+                                                              "Aguardando"),
+                                                          groupValue:
+                                                              _myHomePageController
+                                                                  .groupValueStatus,
+                                                          value: "Aguardando",
+                                                          onChanged:
+                                                              (selected) {
+                                                            builder(() =>
+                                                                _myHomePageController
+                                                                    .changeStatusFilter(
+                                                                        selected!));
+                                                          },
+                                                        ),
                                                       ],
                                                     ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 3,
-                                                    child: Column(
+                                                    Text(
+                                                      "Data",
+                                                      style: GoogleFonts.nunito(
+                                                        fontSize: 22.sp,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                      ),
+                                                    ),
+                                                    Column(
+                                                      children: [
+                                                        RadioListTile.adaptive(
+                                                          title: Text("Todos"),
+                                                          value: "Todos",
+                                                          groupValue:
+                                                              _myHomePageController
+                                                                  .groupValueData,
+                                                          onChanged:
+                                                              (selected) {
+                                                            builder(() =>
+                                                                _myHomePageController
+                                                                    .changeDataFilter(
+                                                                        selected!));
+                                                          },
+                                                        ),
+                                                        RadioListTile.adaptive(
+                                                          title: Text(
+                                                              "Últimos 12 meses"),
+                                                          value:
+                                                              "Últimos 12 meses",
+                                                          groupValue:
+                                                              _myHomePageController
+                                                                  .groupValueData,
+                                                          onChanged:
+                                                              (selected) {
+                                                            builder(() =>
+                                                                _myHomePageController
+                                                                    .changeDataFilter(
+                                                                        selected!));
+                                                          },
+                                                        ),
+                                                        RadioListTile.adaptive(
+                                                          title: Text(
+                                                              "Últimos 6 meses"),
+                                                          value:
+                                                              "Últimos 6 meses",
+                                                          groupValue:
+                                                              _myHomePageController
+                                                                  .groupValueData,
+                                                          onChanged:
+                                                              (selected) {
+                                                            builder(() =>
+                                                                _myHomePageController
+                                                                    .changeDataFilter(
+                                                                        selected!));
+                                                          },
+                                                        ),
+                                                        RadioListTile.adaptive(
+                                                          title: Text(
+                                                              "Últimos 30 dias"),
+                                                          value:
+                                                              "Últimos 30 dias",
+                                                          groupValue:
+                                                              _myHomePageController
+                                                                  .groupValueData,
+                                                          onChanged:
+                                                              (selected) {
+                                                            builder(() =>
+                                                                _myHomePageController
+                                                                    .changeDataFilter(
+                                                                        selected!));
+                                                          },
+                                                        ),
+                                                        RadioListTile.adaptive(
+                                                          title: Text(
+                                                              "Semana passada"),
+                                                          value:
+                                                              "Semana passada",
+                                                          groupValue:
+                                                              _myHomePageController
+                                                                  .groupValueData,
+                                                          onChanged:
+                                                              (selected) {
+                                                            builder(() =>
+                                                                _myHomePageController
+                                                                    .changeDataFilter(
+                                                                        selected!));
+                                                          },
+                                                        ),
+                                                        RadioListTile.adaptive(
+                                                          title: Text(
+                                                              "Últimas 24 horas"),
+                                                          value:
+                                                              "Últimas 24 horas",
+                                                          groupValue:
+                                                              _myHomePageController
+                                                                  .groupValueData,
+                                                          onChanged:
+                                                              (selected) {
+                                                            builder(() =>
+                                                                _myHomePageController
+                                                                    .changeDataFilter(
+                                                                        selected!));
+                                                          },
+                                                        ),
+                                                      ],
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 3,
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Divider(
+                                                      height: 5,
+                                                      thickness: 1,
+                                                      color: Colors.black
+                                                          .withOpacity(.1),
+                                                    ),
+                                                    Row(
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
-                                                              .spaceEvenly,
+                                                              .center,
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
                                                               .center,
                                                       children: [
-                                                        Divider(
-                                                          height: 5,
-                                                          thickness: 1,
-                                                          color: Colors.black
-                                                              .withOpacity(.1),
+                                                        OutlinedButton(
+                                                          onPressed: () {
+                                                            _myHomePageController
+                                                                .changeDataFilter(
+                                                                    "");
+                                                            _myHomePageController
+                                                                .changeStatusFilter(
+                                                                    "");
+                                                            if (Navigator.of(
+                                                                    context)
+                                                                .canPop()) {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            }
+                                                          },
+                                                          style: OutlinedButton
+                                                              .styleFrom(
+                                                            foregroundColor:
+                                                                Colors
+                                                                    .redAccent,
+                                                            side: BorderSide(
+                                                              color: Colors
+                                                                  .redAccent,
+                                                              width: 1,
+                                                            ),
+                                                          ),
+                                                          child:
+                                                              Text("Redefinir"),
                                                         ),
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            OutlinedButton(
-                                                              onPressed: () {
-                                                                _groupValueData =
-                                                                    "";
-                                                                _groupValueStatus =
-                                                                    "";
-                                                                if (Navigator.of(
-                                                                        context)
-                                                                    .canPop()) {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                }
-                                                              },
-                                                              style:
-                                                                  OutlinedButton
-                                                                      .styleFrom(
-                                                                foregroundColor:
-                                                                    Colors
-                                                                        .redAccent,
-                                                                side:
-                                                                    BorderSide(
-                                                                  color: Colors
-                                                                      .redAccent,
-                                                                  width: 1,
-                                                                ),
-                                                              ),
-                                                              child: Text(
-                                                                  "Redefinir"),
+                                                        SizedBox(
+                                                          width: 24.r,
+                                                        ),
+                                                        OutlinedButton(
+                                                          onPressed: () {
+                                                            if (Navigator.of(
+                                                                    context)
+                                                                .canPop()) {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            }
+                                                          },
+                                                          style: OutlinedButton
+                                                              .styleFrom(
+                                                            foregroundColor:
+                                                                Colors
+                                                                    .blueAccent,
+                                                            side: BorderSide(
+                                                              color: Colors
+                                                                  .blueAccent,
+                                                              width: 1,
                                                             ),
-                                                            SizedBox(
-                                                              width: 24.r,
-                                                            ),
-                                                            OutlinedButton(
-                                                              onPressed: () {
-                                                                if (Navigator.of(
-                                                                        context)
-                                                                    .canPop()) {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                }
-                                                              },
-                                                              style:
-                                                                  OutlinedButton
-                                                                      .styleFrom(
-                                                                foregroundColor:
-                                                                    Colors
-                                                                        .blueAccent,
-                                                                side:
-                                                                    BorderSide(
-                                                                  color: Colors
-                                                                      .blueAccent,
-                                                                  width: 1,
-                                                                ),
-                                                              ),
-                                                              child: Text(
-                                                                  "Aplicar"),
-                                                            ),
-                                                          ],
+                                                          ),
+                                                          child:
+                                                              Text("Aplicar"),
                                                         ),
                                                       ],
                                                     ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
+                                                  ],
+                                                ),
+                                              )
+                                            ],
                                           ),
-                                        );
-                                      }),
-                                    );
-                                  },
-                                  icon: FaIcon(
-                                    FontAwesomeIcons.filter,
-                                  ),
-                                );
-                              }),
+                                        ),
+                                      );
+                                    }),
+                                  );
+                                },
+                                icon: FaIcon(
+                                  FontAwesomeIcons.filter,
+                                ),
+                              ),
                       ],
                       bottom: TabBar(
                         onTap: (tappedIndex) {

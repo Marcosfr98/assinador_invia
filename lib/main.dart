@@ -33,7 +33,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  MyHomePageController _myHomePageController = MyHomePageController();
+  MyHomePageController _myHomePageController = MyHomePageController.instance;
 
   @override
   void initState() {
@@ -66,12 +66,12 @@ class _MyAppState extends State<MyApp> {
                   ),
                   listTileTheme: ListTileThemeData(
                     titleTextStyle: GoogleFonts.nunito(
-                      fontSize: 14.sp,
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.w700,
                       color: Colors.black,
                     ),
                     subtitleTextStyle: GoogleFonts.nunito(
-                      fontSize: 12.sp,
+                      fontSize: 14.sp,
                       fontWeight: FontWeight.w400,
                       color: Colors.black,
                     ),
