@@ -97,25 +97,6 @@ class InicioWidget extends StatelessWidget {
               SizedBox(
                 height: 24.h,
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Atividades recentes",
-                    style: GoogleFonts.nunito(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 12.h,
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 24.h,
-              ),
             ],
           ),
         ),
@@ -146,8 +127,33 @@ class _DocumentoItemWidgetState extends State<DocumentoItemWidget> {
   }
 
   @override
+  void dispose() {
+    _myHomePageController.changeDataFilter("Todas");
+    _myHomePageController.changeStatusFilter("Nenhum");
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_myHomePageController.groupValueStatus == "Aguardando") {
+      _myHomePageController.changeIcon(
+        FontAwesomeIcons.fileContract,
+      );
+    } else if (_myHomePageController.groupValueStatus == "Pendentes") {
+      _myHomePageController.changeIcon(
+        FontAwesomeIcons.fileCircleQuestion,
+      );
+    } else {
+      _myHomePageController.changeIcon(
+        FontAwesomeIcons.fileCircleCheck,
+      );
+    }
+
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    print(_myHomePageController.groupValueStatus);
     return AnimatedBuilder(
       animation: _myHomePageController,
       builder: (context, child) {
@@ -170,7 +176,75 @@ class _DocumentoItemWidgetState extends State<DocumentoItemWidget> {
                       child: ListView.builder(
                         itemCount: fluxoAguardandoModel.length,
                         itemBuilder: (context, index) {
-                          if (_myHomePageController.groupValueData ==
+                          if (_myHomePageController.groupValueData == "Todos") {
+                            return Column(
+                              children: [
+                                Material(
+                                  elevation: 2.r,
+                                  child: SizedBox(
+                                    height: 75.h,
+                                    child: ListTile(
+                                      isThreeLine: true,
+                                      onTap: () {
+                                        Get.to(
+                                          () => DetalhesDocumento(),
+                                        );
+                                      },
+                                      leading: FaIcon(
+                                        FontAwesomeIcons.fileContract,
+                                      ),
+                                      title: Text(
+                                        fluxoAguardandoModel[index].desnome ??
+                                            "",
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
+                                        style: GoogleFonts.nunito(
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      subtitle: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            fluxoAguardandoModel[index]
+                                                    .desemail ??
+                                                "",
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ),
+                                          Text(
+                                            fluxoAguardandoModel[index]
+                                                    .descpf ??
+                                                "",
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: IconButton(
+                                        onPressed: () {
+                                          Get.to(
+                                            () => WebViewCustomWidget(
+                                                url: fluxoAguardandoModel[index]
+                                                        .signLink ??
+                                                    ""),
+                                          );
+                                        },
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.eye,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 2.h,
+                                ),
+                              ],
+                            );
+                          } else if (_myHomePageController.groupValueData ==
                                   "Últimos 12 meses" &&
                               DateTime.parse(fluxoAguardandoModel[index].dtassinatura!)
                                   .isBefore(DateTime.now()) &&
@@ -548,6 +622,9 @@ class _DocumentoItemWidgetState extends State<DocumentoItemWidget> {
             },
           );
         } else if (_myHomePageController.groupValueStatus == "Pendentes") {
+          _myHomePageController.changeIcon(
+            FontAwesomeIcons.fileCircleQuestion,
+          );
           return FutureBuilder(
             future: _futurePendentes,
             builder: (context, snapshot) {
@@ -569,8 +646,78 @@ class _DocumentoItemWidgetState extends State<DocumentoItemWidget> {
                           return ListView.builder(
                             itemCount: fluxosPendentesModel.length,
                             itemBuilder: (context, index) {
-                              print(fluxosPendentesModel[index].dtcadastro!);
                               if (_myHomePageController.groupValueData ==
+                                  "Todos") {
+                                return Column(
+                                  children: [
+                                    Material(
+                                      elevation: 2.r,
+                                      child: SizedBox(
+                                        height: 75.h,
+                                        child: ListTile(
+                                          isThreeLine: true,
+                                          onTap: () {
+                                            Get.to(
+                                              () => DetalhesDocumento(),
+                                            );
+                                          },
+                                          leading: FaIcon(
+                                            FontAwesomeIcons.fileCircleQuestion,
+                                          ),
+                                          title: Text(
+                                            fluxosPendentesModel[index]
+                                                    .desdocnome ??
+                                                "",
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 2,
+                                            style: GoogleFonts.nunito(
+                                              fontSize: 16.sp,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                          subtitle: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                fluxosPendentesModel[index]
+                                                        .desdescricao ??
+                                                    "",
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                              ),
+                                              Text(
+                                                fluxosPendentesModel[index]
+                                                        .descategoria ??
+                                                    "",
+                                              ),
+                                            ],
+                                          ),
+                                          trailing: IconButton(
+                                            onPressed: () {
+                                              Get.to(
+                                                () => PdfViewer(
+                                                    url: fluxosPendentesModel[
+                                                                index]
+                                                            .desdocassinado ??
+                                                        ""),
+                                              );
+                                            },
+                                            icon: FaIcon(
+                                              FontAwesomeIcons.eye,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 2.h,
+                                    ),
+                                  ],
+                                );
+                              } else if (_myHomePageController.groupValueData ==
                                       "Últimos 12 meses" &&
                                   DateTime.parse(fluxosPendentesModel[index].dtcadastro!)
                                       .isBefore(DateTime.now()) &&
@@ -629,9 +776,13 @@ class _DocumentoItemWidgetState extends State<DocumentoItemWidget> {
                                           ),
                                           trailing: IconButton(
                                             onPressed: () {
-                                              Get.to(()=> PdfViewer(url: fluxosPendentesModel[index]
-                                                        .desdocassinado ??
-                                                    ""),);
+                                              Get.to(
+                                                () => PdfViewer(
+                                                    url: fluxosPendentesModel[
+                                                                index]
+                                                            .desdocassinado ??
+                                                        ""),
+                                              );
                                             },
                                             icon: FaIcon(
                                               FontAwesomeIcons.eye,
@@ -666,7 +817,7 @@ class _DocumentoItemWidgetState extends State<DocumentoItemWidget> {
                                             );
                                           },
                                           leading: FaIcon(
-                                            FontAwesomeIcons.clock,
+                                            FontAwesomeIcons.fileCircleQuestion,
                                           ),
                                           title: Text(
                                             fluxosPendentesModel[index]
@@ -701,9 +852,13 @@ class _DocumentoItemWidgetState extends State<DocumentoItemWidget> {
                                           ),
                                           trailing: IconButton(
                                             onPressed: () {
-                                              Get.to(()=> PdfViewer(url: fluxosPendentesModel[index]
-                                                        .desdocassinado ??
-                                                    ""),);
+                                              Get.to(
+                                                () => PdfViewer(
+                                                    url: fluxosPendentesModel[
+                                                                index]
+                                                            .desdocassinado ??
+                                                        ""),
+                                              );
                                             },
                                             icon: FaIcon(
                                               FontAwesomeIcons.eye,
@@ -741,7 +896,7 @@ class _DocumentoItemWidgetState extends State<DocumentoItemWidget> {
                                             );
                                           },
                                           leading: FaIcon(
-                                            FontAwesomeIcons.clock,
+                                            FontAwesomeIcons.fileCircleQuestion,
                                           ),
                                           title: Text(
                                             fluxosPendentesModel[index]
@@ -776,9 +931,13 @@ class _DocumentoItemWidgetState extends State<DocumentoItemWidget> {
                                           ),
                                           trailing: IconButton(
                                             onPressed: () {
-                                              Get.to(()=> PdfViewer(url: fluxosPendentesModel[index]
-                                                        .desdocassinado ??
-                                                    ""),);
+                                              Get.to(
+                                                () => PdfViewer(
+                                                    url: fluxosPendentesModel[
+                                                                index]
+                                                            .desdocassinado ??
+                                                        ""),
+                                              );
                                             },
                                             icon: FaIcon(
                                               FontAwesomeIcons.eye,
@@ -817,7 +976,7 @@ class _DocumentoItemWidgetState extends State<DocumentoItemWidget> {
                                             );
                                           },
                                           leading: FaIcon(
-                                            FontAwesomeIcons.clock,
+                                            FontAwesomeIcons.fileCircleQuestion,
                                           ),
                                           title: Text(
                                             fluxosPendentesModel[index]
@@ -852,9 +1011,13 @@ class _DocumentoItemWidgetState extends State<DocumentoItemWidget> {
                                           ),
                                           trailing: IconButton(
                                             onPressed: () {
-                                              Get.to(()=> PdfViewer(url: fluxosPendentesModel[index]
-                                                        .desdocassinado ??
-                                                    ""),);
+                                              Get.to(
+                                                () => PdfViewer(
+                                                    url: fluxosPendentesModel[
+                                                                index]
+                                                            .desdocassinado ??
+                                                        ""),
+                                              );
                                             },
                                             icon: FaIcon(
                                               FontAwesomeIcons.eye,
@@ -894,7 +1057,7 @@ class _DocumentoItemWidgetState extends State<DocumentoItemWidget> {
                                             );
                                           },
                                           leading: FaIcon(
-                                            FontAwesomeIcons.clock,
+                                            FontAwesomeIcons.fileCircleQuestion,
                                           ),
                                           title: Text(
                                             fluxosPendentesModel[index]
@@ -929,9 +1092,13 @@ class _DocumentoItemWidgetState extends State<DocumentoItemWidget> {
                                           ),
                                           trailing: IconButton(
                                             onPressed: () {
-                                              Get.to(()=> PdfViewer(url: fluxosPendentesModel[index]
-                                                        .desdocassinado ??
-                                                    ""),);
+                                              Get.to(
+                                                () => PdfViewer(
+                                                    url: fluxosPendentesModel[
+                                                                index]
+                                                            .desdocassinado ??
+                                                        ""),
+                                              );
                                             },
                                             icon: FaIcon(
                                               FontAwesomeIcons.eye,
@@ -965,6 +1132,9 @@ class _DocumentoItemWidgetState extends State<DocumentoItemWidget> {
             },
           );
         } else if (_myHomePageController.groupValueStatus == "Finalizados") {
+          _myHomePageController.changeIcon(
+            FontAwesomeIcons.fileCircleCheck,
+          );
           return FutureBuilder(
             future: _futureFinalizados,
             builder: (context, snapshot) {
@@ -983,7 +1153,77 @@ class _DocumentoItemWidgetState extends State<DocumentoItemWidget> {
                       child: ListView.builder(
                         itemCount: fluxosFinalizadosModel.length,
                         itemBuilder: (context, index) {
-                          if (_myHomePageController.groupValueData ==
+                          if (_myHomePageController.groupValueData == "Todos") {
+                            return Column(
+                              children: [
+                                Material(
+                                  elevation: 2.r,
+                                  child: SizedBox(
+                                    height: 75.h,
+                                    child: ListTile(
+                                      isThreeLine: true,
+                                      onTap: () {
+                                        Get.to(
+                                          () => DetalhesDocumento(),
+                                        );
+                                      },
+                                      leading: FaIcon(
+                                        FontAwesomeIcons.fileCircleCheck,
+                                      ),
+                                      title: Text(
+                                        fluxosFinalizadosModel[index]
+                                                .desdocnome ??
+                                            "",
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 2,
+                                        style: GoogleFonts.nunito(
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      subtitle: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            fluxosFinalizadosModel[index]
+                                                    .desdescricao ??
+                                                "",
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ),
+                                          Text(
+                                            fluxosFinalizadosModel[index]
+                                                    .descategoria ??
+                                                "",
+                                          ),
+                                        ],
+                                      ),
+                                      trailing: IconButton(
+                                        onPressed: () {
+                                          Get.to(
+                                            () => PdfViewer(
+                                                url: fluxosFinalizadosModel[
+                                                            index]
+                                                        .desdocassinado ??
+                                                    ""),
+                                          );
+                                        },
+                                        icon: FaIcon(
+                                          FontAwesomeIcons.eye,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 2.h,
+                                ),
+                              ],
+                            );
+                          } else if (_myHomePageController.groupValueData ==
                                   "Últimos 12 meses" &&
                               DateTime.parse(fluxosFinalizadosModel[index].dtcadastro!)
                                   .isBefore(DateTime.now()) &&
@@ -1042,10 +1282,14 @@ class _DocumentoItemWidgetState extends State<DocumentoItemWidget> {
                                       ),
                                       trailing: IconButton(
                                         onPressed: () {
-                                              Get.to(()=> PdfViewer(url: fluxosFinalizadosModel[index]
+                                          Get.to(
+                                            () => PdfViewer(
+                                                url: fluxosFinalizadosModel[
+                                                            index]
                                                         .desdocassinado ??
-                                                    ""),);
-                                            },
+                                                    ""),
+                                          );
+                                        },
                                         icon: FaIcon(
                                           FontAwesomeIcons.eye,
                                         ),
@@ -1374,6 +1618,40 @@ class _DocumentoItemWidgetState extends State<DocumentoItemWidget> {
   }
 }
 
+class NoDocumentsWidget extends StatelessWidget {
+  const NoDocumentsWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            FaIcon(
+              FontAwesomeIcons.fileCircleXmark,
+              size: 64,
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            Text(
+              style: GoogleFonts.nunito(
+                fontSize: 24,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+              "Nenhum documento encontrado para a pesquisa selecionada!",
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class DestinatarioWidget extends StatelessWidget {
   final int index;
 
@@ -1459,7 +1737,7 @@ class _FilterWidgetState extends State<FilterWidget> {
             builder: (context, child) {
               return Text(
                 _myHomePageController.groupValueStatus.isEmpty
-                    ? "Todos"
+                    ? "Nenhum"
                     : _myHomePageController.groupValueStatus,
                 style: GoogleFonts.nunito(
                   fontSize: 16.sp,
@@ -1481,7 +1759,7 @@ class _FilterWidgetState extends State<FilterWidget> {
             builder: (context, child) {
               return Text(
                 _myHomePageController.groupValueData.isEmpty
-                    ? "Todos"
+                    ? "Todas"
                     : _myHomePageController.groupValueData,
                 style: GoogleFonts.nunito(
                   fontSize: 16.sp,

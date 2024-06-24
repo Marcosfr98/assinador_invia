@@ -2,10 +2,12 @@ import 'dart:ui';
 
 import 'package:assinador_invia/firebase_options.dart';
 import 'package:assinador_invia/my_home_page/controllers/controllers.dart';
+import 'package:assinador_invia/services/notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -37,6 +39,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    LocalNotificationsService.instance.initialization();
     super.initState();
   }
 
@@ -51,6 +54,7 @@ class _MyAppState extends State<MyApp> {
             animation: _myHomePageController,
             builder: (context, child) {
               return GetMaterialApp(
+                builder: EasyLoading.init(),
                 scrollBehavior: const ScrollBehavior().copyWith(
                   physics: const BouncingScrollPhysics(
                     parent: FixedExtentScrollPhysics(),

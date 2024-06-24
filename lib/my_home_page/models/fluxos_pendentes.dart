@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
 class FluxosPendentesModel {
   String? _idassinatura;
   String? _idcriador;
@@ -12,21 +15,24 @@ class FluxosPendentesModel {
   String? _finalizado;
   String? _dtLimite;
   String? _dtfinalizado;
+  IconData? _icon;
 
-  FluxosPendentesModel(
-      {String? idassinatura,
-      String? idcriador,
-      String? desdocnome,
-      String? desdescricao,
-      String? descategoria,
-      String? desdocoriginal,
-      String? desdocassinado,
-      String? numassinantes,
-      String? numassinaturas,
-      String? dtcadastro,
-      String? finalizado,
-      String? dtLimite,
-      String? dtfinalizado}) {
+  FluxosPendentesModel({
+    String? idassinatura,
+    String? idcriador,
+    String? desdocnome,
+    String? desdescricao,
+    String? descategoria,
+    String? desdocoriginal,
+    String? desdocassinado,
+    String? numassinantes,
+    String? numassinaturas,
+    String? dtcadastro,
+    String? finalizado,
+    String? dtLimite,
+    String? dtfinalizado,
+    IconData? icon = FontAwesomeIcons.fileCircleQuestion,
+  }) {
     if (idassinatura != null) {
       this._idassinatura = idassinatura;
     }
@@ -66,6 +72,9 @@ class FluxosPendentesModel {
     if (dtfinalizado != null) {
       this._dtfinalizado = dtfinalizado;
     }
+    if (icon != null) {
+      this._icon = icon;
+    }
   }
 
   String? get idassinatura => _idassinatura;
@@ -97,6 +106,8 @@ class FluxosPendentesModel {
   set dtLimite(String? dtLimite) => _dtLimite = dtLimite;
   String? get dtfinalizado => _dtfinalizado;
   set dtfinalizado(String? dtfinalizado) => _dtfinalizado = dtfinalizado;
+  IconData? get icon => _icon;
+  set icon(IconData? icon) => _icon = icon;
 
   FluxosPendentesModel.fromJson(Map<String, dynamic> json) {
     _idassinatura = json['idassinatura'];

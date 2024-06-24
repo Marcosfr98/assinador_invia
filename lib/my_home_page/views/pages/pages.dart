@@ -138,22 +138,6 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                                                       children: [
                                                         RadioListTile.adaptive(
                                                           title: Text(
-                                                              "Todos os documentos"),
-                                                          groupValue:
-                                                              _myHomePageController
-                                                                  .groupValueStatus,
-                                                          value:
-                                                              "Todos os documentos",
-                                                          onChanged:
-                                                              (selected) {
-                                                            builder(() =>
-                                                                _myHomePageController
-                                                                    .changeStatusFilter(
-                                                                        selected!));
-                                                          },
-                                                        ),
-                                                        RadioListTile.adaptive(
-                                                          title: Text(
                                                               "Finalizados"),
                                                           groupValue:
                                                               _myHomePageController
@@ -422,8 +406,13 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                           ),
                           Column(
                             children: [
-                              FaIcon(
-                                FontAwesomeIcons.file,
+                              AnimatedBuilder(
+                                animation: _myHomePageController,
+                                builder: (context, child) {
+                                  return FaIcon(
+                                    _myHomePageController.icon,
+                                  );
+                                },
                               ),
                               Text("Documentos")
                             ],
@@ -433,25 +422,26 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     ),
               drawer: _currentIndex == 0 ? Drawer() : null,
               body: AnimatedBuilder(
-                  animation: _myHomePageController,
-                  builder: (context, child) {
-                    return Stack(
-                      children: [
-                        _pages[_currentIndex],
-                        !_myHomePageController.isFabOpened
-                            ? SizedBox()
-                            : BackdropFilter(
-                                filter: ImageFilter.blur(
-                                    sigmaX: 10.0, sigmaY: 10.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.black.withOpacity(.75),
-                                  ),
+                animation: _myHomePageController,
+                builder: (context, child) {
+                  return Stack(
+                    children: [
+                      _pages[_currentIndex],
+                      !_myHomePageController.isFabOpened
+                          ? SizedBox()
+                          : BackdropFilter(
+                              filter:
+                                  ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(.75),
                                 ),
                               ),
-                      ],
-                    );
-                  }),
+                            ),
+                    ],
+                  );
+                },
+              ),
               floatingActionButtonLocation: ExpandableFab.location,
               floatingActionButton: ExpandableFab(
                 openButtonBuilder: RotateFloatingActionButtonBuilder(
