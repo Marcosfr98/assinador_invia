@@ -1,15 +1,12 @@
-import "dart:io";
-
-import "package:assinador_invia/services/notifications.dart";
+import "package:assinador_invia/my_home_page/controllers/controllers.dart";
 import "package:flutter/material.dart";
-import "package:flutter_easyloading/flutter_easyloading.dart";
-import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
 import "package:share_plus/share_plus.dart";
 import "package:syncfusion_flutter_pdfviewer/pdfviewer.dart";
 
 class PdfViewer extends StatefulWidget {
   final String url;
+
   const PdfViewer({super.key, required this.url});
 
   @override
@@ -19,6 +16,9 @@ class PdfViewer extends StatefulWidget {
 class _PdfViewerState extends State<PdfViewer> {
   double _downloadProgress = 0.0;
   bool _isLoading = false;
+  final MyHomePageController _myHomePageController =
+      MyHomePageController.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +34,9 @@ class _PdfViewerState extends State<PdfViewer> {
             child: Builder(
               builder: (context) {
                 if (widget.url.isNotEmpty) {
-                  return SfPdfViewer.network(widget.url);
+                  return SfPdfViewer.network(
+                    widget.url,
+                  );
                 } else {
                   return Center(
                     child: Text("Url inválida!"),
@@ -85,35 +87,6 @@ class _PdfViewerState extends State<PdfViewer> {
                         setState(() {
                           _isLoading = true;
                         });
-                        final File? file = await FileDownloader.downloadFile(
-                            url: widget.url,
-                            name: "documento.pdf",
-                            onProgress: (String? fileName, double progress) {
-                              setState(() {
-                                _downloadProgress = progress;
-                              });
-                            },
-                            onDownloadCompleted: (fileName) async {
-                              setState(() {
-                                _isLoading = false;
-                              });
-                              await LocalNotificationsService.instance
-                                  .showNotification(
-                                      0,
-                                      "Documento baixado com sucesso!",
-                                      "Documento está localizado na pasta Downloads do dispositivo.",
-                                      "payload");
-                            },
-                            onDownloadError: (error) async {
-                              await EasyLoading.showToast(
-                                  "Erro ao baixar documento!");
-                              setState(() {
-                                _isLoading = false;
-                              });
-                              print(error);
-                            });
-
-                        print('FILE: ${file?.path}');
                       },
                     ),
                   ),

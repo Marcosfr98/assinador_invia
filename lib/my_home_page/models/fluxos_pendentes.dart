@@ -1,3 +1,4 @@
+import 'package:assinador_invia/my_home_page/models/assinantes_fluxo_model.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -16,6 +17,7 @@ class FluxosPendentesModel {
   String? _dtLimite;
   String? _dtfinalizado;
   IconData? _icon;
+  List<AssinanteFluxoModel>? _assinantes;
 
   FluxosPendentesModel({
     String? idassinatura,
@@ -31,6 +33,7 @@ class FluxosPendentesModel {
     String? finalizado,
     String? dtLimite,
     String? dtfinalizado,
+    List<AssinanteFluxoModel>? assinantes,
     IconData? icon = FontAwesomeIcons.fileCircleQuestion,
   }) {
     if (idassinatura != null) {
@@ -75,6 +78,9 @@ class FluxosPendentesModel {
     if (icon != null) {
       this._icon = icon;
     }
+    if (assinantes != null) {
+      this._assinantes = assinantes;
+    }
   }
 
   String? get idassinatura => _idassinatura;
@@ -106,6 +112,9 @@ class FluxosPendentesModel {
   set dtLimite(String? dtLimite) => _dtLimite = dtLimite;
   String? get dtfinalizado => _dtfinalizado;
   set dtfinalizado(String? dtfinalizado) => _dtfinalizado = dtfinalizado;
+  List<AssinanteFluxoModel>? get assinantes => _assinantes;
+  set assinantes(List<AssinanteFluxoModel>? assinantes) =>
+      _assinantes = assinantes;
   IconData? get icon => _icon;
   set icon(IconData? icon) => _icon = icon;
 
@@ -123,6 +132,7 @@ class FluxosPendentesModel {
     _finalizado = json['finalizado'];
     _dtLimite = json['dt_limite'];
     _dtfinalizado = json['dtfinalizado'];
+    _assinantes = json['assinantes'];
   }
 
   Map<String, dynamic> toJson() {
@@ -140,6 +150,7 @@ class FluxosPendentesModel {
     data['finalizado'] = this._finalizado;
     data['dt_limite'] = this._dtLimite;
     data['dtfinalizado'] = this._dtfinalizado;
+    data['assinantes'] = this._assinantes;
     return data;
   }
 }

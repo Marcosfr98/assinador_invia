@@ -1,3 +1,4 @@
+import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:assinador_invia/firebase_options.dart';
@@ -7,6 +8,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -16,7 +18,9 @@ import 'my_home_page/views/pages/pages.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   FlutterError.onError = (errorDetails) {
     FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
   };
@@ -24,7 +28,11 @@ void main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
-  runApp(const MyApp());
+  await LocalNotificationsService.instance.initialization();
+  await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
+  runApp(
+    const MyApp(),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -36,11 +44,34 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   MyHomePageController _myHomePageController = MyHomePageController.instance;
+  ReceivePort _port = ReceivePort();
+
+  @pragma('vm:entry-point')
+  static void downloadCallback(String id, int status, int progress) async {
+    final SendPort? send =
+        IsolateNameServer.lookupPortByName('downloader_send_port');
+    if (status == DownloadTaskStatus.complete) {}
+    send!.send([id, status, progress]);
+  }
 
   @override
   void initState() {
-    LocalNotificationsService.instance.initialization();
+    IsolateNameServer.registerPortWithName(
+        _port.sendPort, 'downloader_send_port');
+    _port.listen((dynamic data) async {
+      String id = data[0];
+      DownloadTaskStatus status = DownloadTaskStatus.fromInt(data[1]);
+      int progress = data[2];
+      setState(() {});
+    });
+    FlutterDownloader.registerCallback(downloadCallback);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    IsolateNameServer.removePortNameMapping('downloader_send_port');
+    super.dispose();
   }
 
   @override
@@ -55,14 +86,10 @@ class _MyAppState extends State<MyApp> {
             builder: (context, child) {
               return GetMaterialApp(
                 builder: EasyLoading.init(),
-                scrollBehavior: const ScrollBehavior().copyWith(
-                  physics: const BouncingScrollPhysics(
-                    parent: FixedExtentScrollPhysics(),
-                  ),
-                ),
+                scrollBehavior: _myHomePageController.scrollBehavior,
                 debugShowCheckedModeBanner: false,
                 theme: ThemeData(
-                  scaffoldBackgroundColor: Color(0xFFEFEFEF),
+                  scaffoldBackgroundColor: Colors.white,
                   tabBarTheme: TabBarTheme(
                     indicatorColor: Colors.blueAccent,
                     labelColor: Colors.blueAccent,

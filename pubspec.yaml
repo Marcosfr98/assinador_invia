@@ -40,7 +40,7 @@ dependencies:
   font_awesome_flutter: ^10.7.0
   http: ^1.2.1
   url_launcher: ^6.3.0
-  flutter_file_downloader: ^1.2.2-dev.1
+  flutter_downloader: ^1.11.7
   flutter_local_notifications: ^17.1.2
   webview_flutter: ^4.8.0
   syncfusion_flutter_pdfviewer: ^26.1.38
@@ -55,6 +55,9 @@ dependencies:
   flutter_expandable_fab: ^2.0.0
   share_plus: ^9.0.0
   flutter_easyloading: ^3.0.5
+  animated_icon: ^0.0.9
+  open_filex: ^4.4.0
+  path_provider: ^2.1.3
 
 dev_dependencies:
   flutter_test:
@@ -65,7 +68,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^3.0.0
+  flutter_lints: ^4.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
