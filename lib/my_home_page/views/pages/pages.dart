@@ -16,6 +16,8 @@ import "package:font_awesome_flutter/font_awesome_flutter.dart";
 import "package:google_fonts/google_fonts.dart";
 import "package:share_plus/share_plus.dart";
 
+import "../../services/db.dart";
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
@@ -447,6 +449,7 @@ class _DetalhesDocumentoState extends State<DetalhesDocumento> {
 
   @override
   void initState() {
+    FirestoreServices.instance.setData(widget.item);
     super.initState();
   }
 

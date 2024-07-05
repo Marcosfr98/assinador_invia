@@ -7,9 +7,9 @@ import "package:assinador_invia/my_home_page/models/fluxos_aguardando.dart";
 import "package:assinador_invia/my_home_page/models/fluxos_finalizados.dart";
 import "package:assinador_invia/my_home_page/models/fluxos_pendentes.dart";
 import "package:assinador_invia/my_home_page/services/api.dart";
+import "package:assinador_invia/my_home_page/services/db.dart";
 import "package:assinador_invia/my_home_page/views/pages/pages.dart";
 import "package:assinador_invia/utils/constants.dart";
-import "package:assinador_invia/webview/views/pages/pages.dart";
 import "package:flutter/material.dart";
 import "package:flutter_screenutil/flutter_screenutil.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
@@ -186,6 +186,7 @@ class _InicioWidgetState extends State<InicioWidget> {
                     onTap: () {
                       setState(() {
                         _didFilter = !_didFilter;
+                        _myHomePageController.changeFilterRecent(false);
                       });
                     },
                     leading: FaIcon(
@@ -193,7 +194,7 @@ class _InicioWidgetState extends State<InicioWidget> {
                       size: 18.sp,
                     ),
                     title: Text(
-                      "Documento recentes",
+                      "Documentos recentes",
                       style: GoogleFonts.nunito(
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w600,
@@ -225,7 +226,6 @@ class DocumentosItemWidget extends StatefulWidget {
 
 class _DocumentosItemWidgetState extends State<DocumentosItemWidget> {
   final MyHomePageController _myHomePageController = MyHomePageController.instance;
-  final MyHomePageApiServices _myHomePageApiServices = MyHomePageApiServices.instance;
   late Future _futureFluxos;
   late Future _futurePendentes;
   late Future _futureFinalizados;
@@ -684,7 +684,6 @@ class DestinatarioWidget extends StatefulWidget {
 
 class _DestinatarioWidgetState extends State<DestinatarioWidget> {
   late Future _future;
-  final _myHomePageController = MyHomePageController.instance;
 
   @override
   void initState() {
@@ -788,8 +787,6 @@ class DocumentosWidget extends StatefulWidget {
 }
 
 class _DocumentosWidgetState extends State<DocumentosWidget> {
-  MyHomePageController _myHomePageController = MyHomePageController.instance;
-
   @override
   void dispose() {
     super.dispose();
@@ -951,8 +948,6 @@ class CustomDocumentListTitle extends StatefulWidget {
 }
 
 class _CustomDocumentListTitleState extends State<CustomDocumentListTitle> {
-  final _myHomePageController = MyHomePageController.instance;
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -964,10 +959,9 @@ class _CustomDocumentListTitleState extends State<CustomDocumentListTitle> {
               contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
               isThreeLine: true,
               onTap: () async {
-                widget.isRecent == null ? _myHomePageController.addDocumentoRecente(widget.item) : () {};
                 Get.to(
                   () => DetalhesDocumento(
-                    item: widget.item,
+                    item: widget.isRecent != null && widget.isRecent! ? FluxoAguardandoModel.fromJson(widget.item) : widget.item,
                   ),
                 );
               },
@@ -1125,20 +1119,6 @@ class _ListaDeDocumentosState extends State<ListaDeDocumentos> {
               height: 32,
               thickness: 1.r,
               color: Colors.black.withOpacity(.25),
-            ),
-            Builder(
-              builder: (context) {
-                if (widget.item.signLink != null && widget.item.signLink!.isNotEmpty) {
-                  return SizedBox(
-                    height: screenHeight * .8,
-                    child: WebViewCustomWidget(url: widget.item.signLink),
-                  );
-                } else {
-                  return Center(
-                    child: Text("Link de assinatura não encontrado!"),
-                  );
-                }
-              },
             ),
           ],
         ),
@@ -1344,15 +1324,13 @@ class RecentDocumentsWidget extends StatefulWidget {
 
 class _RecentDocumentsWidgetState extends State<RecentDocumentsWidget> {
   final _myHomePageController = MyHomePageController.instance;
-  final Future<SharedPreferences> _futureRecentes = SharedPreferences.getInstance();
+  final _firestoreService = FirestoreServices.instance;
   late SharedPreferences snapshot;
   List<FluxoAguardandoModel> recentes = [];
 
-  Future<void> getPrefsInstance() async {}
-
   @override
   void initState() {
-    getPrefsInstance();
+    _firestoreService.getData();
     super.initState();
   }
 
@@ -1362,30 +1340,22 @@ class _RecentDocumentsWidgetState extends State<RecentDocumentsWidget> {
       builder: (context, sizes) => SizedBox(
         height: sizes.maxHeight,
         width: sizes.maxWidth,
-        child: AnimatedBuilder(
-          animation: _myHomePageController,
-          builder: (context, child) {
-            return ListView.builder(
-                itemCount: _myHomePageController.recentes.length,
-                itemBuilder: (context, index) {
-                  if (_myHomePageController.recentes[index] is FluxoAguardandoModel) {
-                    return CustomDocumentListTitle(
-                      isRecent: true,
-                      title: recentes[index].desnome ?? "",
-                      subtitle: recentes[index].descpf ?? "",
-                      date: recentes[index].dtassinatura ?? "",
-                      item: recentes[index],
-                    );
-                  } else {
-                    return CustomDocumentListTitle(
-                      isRecent: true,
-                      title: _myHomePageController.recentes[index].desdocnome ?? "",
-                      subtitle: _myHomePageController.recentes[index].desdescricao ?? "",
-                      date: _myHomePageController.recentes[index].dtcadastro ?? "",
-                      item: _myHomePageController.recentes[index],
-                    );
-                  }
-                });
+        child: FutureBuilder(
+          future: _firestoreService.getData(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.connectionState == ConnectionState.done) {
+              return AnimatedBuilder(
+                animation: _myHomePageController,
+                builder: (context, child) {
+                  return SizedBox();
+                },
+              );
+            }
+            return SizedBox();
           },
         ),
       ),

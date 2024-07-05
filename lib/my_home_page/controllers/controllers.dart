@@ -20,6 +20,7 @@ class MyHomePageController extends ChangeNotifier {
   bool _isSuccess = false;
   bool _isFirstPage = true;
   bool _isLastPage = false;
+  bool _filterRecents = true;
   int _currentIndex = 0;
   List<dynamic> _recentes = [];
   ScrollBehavior _scrollBehavior = ScrollBehavior().copyWith(
@@ -37,6 +38,8 @@ class MyHomePageController extends ChangeNotifier {
   String get groupValueData => _groupValueData;
 
   bool get isLoading => _isLoading;
+
+  bool get filterRecents => _filterRecents;
 
   bool get isSuccess => _isSuccess;
 
@@ -83,6 +86,11 @@ class MyHomePageController extends ChangeNotifier {
 
   void changeDidType(bool value) {
     _didType = value;
+    notifyListeners();
+  }
+
+  void changeFilterRecent(bool value) {
+    _filterRecents = value;
     notifyListeners();
   }
 
