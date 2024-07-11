@@ -14,6 +14,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'my_home_page/services/db.dart';
 import 'my_home_page/views/pages/pages.dart';
 
 void main() async {
@@ -45,6 +46,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   MyHomePageController _myHomePageController = MyHomePageController.instance;
   ReceivePort _port = ReceivePort();
+  FirestoreServices _db = FirestoreServices.instance;
 
   @pragma('vm:entry-point')
   static void downloadCallback(String id, int status, int progress) async {
@@ -65,6 +67,7 @@ class _MyAppState extends State<MyApp> {
       setState(() {});
     });
     FlutterDownloader.registerCallback(downloadCallback);
+    _db.getKeys();
     super.initState();
   }
 

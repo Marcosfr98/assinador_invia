@@ -10,10 +10,14 @@ class FirestoreServices extends ChangeNotifier {
   Map<String, dynamic> _data = {
     "Aguardando": [{}],
   };
+  Map<String, dynamic> _keys = {};
 
   Map<String, dynamic> get data => _data;
+
+  Map<String, dynamic> get keys => _keys;
   static final db = FirebaseFirestore.instance;
   static final docRef = db.collection("04082099093").doc("recentes");
+  static final keyRef = db.collection("04082099093").doc("keys");
 
   Future<void> setData(dynamic fluxos) async {
     if (fluxos is FluxoAguardandoModel) {
@@ -132,5 +136,9 @@ class FirestoreServices extends ChangeNotifier {
 
   Future<void> getData() async {
     await docRef.get().then((DocumentSnapshot doc) => _data = doc.data() as Map<String, dynamic>);
+  }
+
+  Future<void> getKeys() async {
+    await keyRef.get().then((DocumentSnapshot doc) => _data = doc.data() as Map<String, dynamic>);
   }
 }
