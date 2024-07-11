@@ -8,6 +8,7 @@ import "package:assinador_invia/my_home_page/models/fluxos_finalizados.dart";
 import "package:assinador_invia/my_home_page/models/fluxos_pendentes.dart";
 import "package:assinador_invia/my_home_page/services/api.dart";
 import "package:assinador_invia/my_home_page/services/db.dart";
+import "package:assinador_invia/my_home_page/services/local_db.dart";
 import "package:assinador_invia/my_home_page/views/pages/pages.dart";
 import "package:assinador_invia/utils/constants.dart";
 import "package:flutter/material.dart";
@@ -28,6 +29,7 @@ class InicioWidget extends StatefulWidget {
 class _InicioWidgetState extends State<InicioWidget> {
   final _myHomePageApiServices = MyHomePageApiServices.instance;
   final _myHomePageController = MyHomePageController.instance;
+  final _localPersistance = LocalPersistence.instance;
   late Future _futureActionNedded;
   late Future _futureWaitingOthers;
   bool _didFilter = false;
@@ -90,10 +92,29 @@ class _InicioWidgetState extends State<InicioWidget> {
                                   children: [
                                     FutureBuilder(
                                         future: _futureActionNedded,
+                                        initialData: _myHomePageController.aguardandoInitialData,
                                         builder: (context, snapshot) {
                                           if (snapshot.connectionState == ConnectionState.waiting) {
-                                            return Center(
-                                              child: CircularProgressIndicator(),
+                                            return Builder(
+                                              builder: (context) {
+                                                if (snapshot.data != null) {
+                                                  return Text(
+                                                    snapshot.data!.toString(),
+                                                    style: GoogleFonts.nunito(
+                                                      fontSize: 32.sp,
+                                                      color: Colors.blueAccent,
+                                                    ),
+                                                  );
+                                                } else {
+                                                  return Text(
+                                                    "- -",
+                                                    style: GoogleFonts.nunito(
+                                                      fontSize: 32.sp,
+                                                      color: Colors.blueAccent,
+                                                    ),
+                                                  );
+                                                }
+                                              },
                                             );
                                           } else if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
                                             return Text(
@@ -144,10 +165,29 @@ class _InicioWidgetState extends State<InicioWidget> {
                             children: [
                               FutureBuilder(
                                   future: _futureWaitingOthers,
+                                  initialData: _myHomePageController.pendenteInitialData,
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState == ConnectionState.waiting) {
-                                      return Center(
-                                        child: CircularProgressIndicator(),
+                                      return Builder(
+                                        builder: (context) {
+                                          if (snapshot.data != null) {
+                                            return Text(
+                                              snapshot.data!.toString(),
+                                              style: GoogleFonts.nunito(
+                                                fontSize: 32.sp,
+                                                color: Colors.blueAccent,
+                                              ),
+                                            );
+                                          } else {
+                                            return Text(
+                                              "- -",
+                                              style: GoogleFonts.nunito(
+                                                fontSize: 32.sp,
+                                                color: Colors.blueAccent,
+                                              ),
+                                            );
+                                          }
+                                        },
                                       );
                                     } else if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
                                       return Text(

@@ -3,6 +3,8 @@ import 'dart:ui';
 
 import 'package:assinador_invia/firebase_options.dart';
 import 'package:assinador_invia/my_home_page/controllers/controllers.dart';
+import 'package:assinador_invia/my_home_page/models/type_variable.dart';
+import 'package:assinador_invia/my_home_page/services/local_db.dart';
 import 'package:assinador_invia/services/notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -19,6 +21,9 @@ import 'my_home_page/views/pages/pages.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final _myHomePageController = MyHomePageController.instance;
+  final _localPersistance = LocalPersistence.instance;
+  FirestoreServices _db = FirestoreServices.instance;
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -29,6 +34,10 @@ void main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
+  await _db.getKeys();
+  await _localPersistance.initialize();
+  _myHomePageController.aguardandoInitialData = await _localPersistance.getData(key: "aguardando", type: TypeVariable.int) ?? 0;
+  _myHomePageController.pendenteInitialData = await _localPersistance.getData(key: "pendentes", type: TypeVariable.int) ?? 0;
   await LocalNotificationsService.instance.initialization();
   await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
   runApp(
@@ -46,20 +55,17 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   MyHomePageController _myHomePageController = MyHomePageController.instance;
   ReceivePort _port = ReceivePort();
-  FirestoreServices _db = FirestoreServices.instance;
 
   @pragma('vm:entry-point')
   static void downloadCallback(String id, int status, int progress) async {
-    final SendPort? send =
-        IsolateNameServer.lookupPortByName('downloader_send_port');
+    final SendPort? send = IsolateNameServer.lookupPortByName('downloader_send_port');
     if (status == DownloadTaskStatus.complete) {}
     send!.send([id, status, progress]);
   }
 
   @override
   void initState() {
-    IsolateNameServer.registerPortWithName(
-        _port.sendPort, 'downloader_send_port');
+    IsolateNameServer.registerPortWithName(_port.sendPort, 'downloader_send_port');
     _port.listen((dynamic data) async {
       String id = data[0];
       DownloadTaskStatus status = DownloadTaskStatus.fromInt(data[1]);
@@ -67,7 +73,6 @@ class _MyAppState extends State<MyApp> {
       setState(() {});
     });
     FlutterDownloader.registerCallback(downloadCallback);
-    _db.getKeys();
     super.initState();
   }
 
@@ -139,8 +144,7 @@ class _MyAppState extends State<MyApp> {
                       color: Colors.black54,
                     ),
                   ),
-                  colorScheme:
-                      ColorScheme.fromSeed(seedColor: Colors.blueAccent),
+                  colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueAccent),
                   useMaterial3: true,
                   textTheme: TextTheme(
                     bodyLarge: GoogleFonts.nunito(
@@ -200,8 +204,7 @@ class _MyAppState extends State<MyApp> {
                     iconSize: 24.sp,
                     foregroundColor: Colors.white,
                     backgroundColor: Colors.blueAccent,
-                    sizeConstraints:
-                        BoxConstraints(minHeight: 50.h, minWidth: 50.w),
+                    sizeConstraints: BoxConstraints(minHeight: 50.h, minWidth: 50.w),
                     shape: CircleBorder(),
                   ),
                   bottomNavigationBarTheme: BottomNavigationBarThemeData(

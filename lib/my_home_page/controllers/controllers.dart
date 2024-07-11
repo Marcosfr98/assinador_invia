@@ -11,6 +11,8 @@ class MyHomePageController extends ChangeNotifier {
   TextEditingController searchingController = TextEditingController();
   bool _isFabOpened = false;
   String _groupValueData = "Todos";
+  int? _aguardandoInitialData;
+  int? _pendenteInitialData;
   String _groupValueStatus = "";
   bool _didType = false;
   bool _isSearching = false;
@@ -35,6 +37,10 @@ class MyHomePageController extends ChangeNotifier {
 
   int get currentIndex => _currentIndex;
 
+  int? get aguardandoInitialData => _aguardandoInitialData;
+
+  int? get pendenteInitialData => _pendenteInitialData;
+
   String get groupValueData => _groupValueData;
 
   bool get isLoading => _isLoading;
@@ -58,6 +64,18 @@ class MyHomePageController extends ChangeNotifier {
   IconData get icon => _icon;
 
   bool get isFabOpened => _isFabOpened;
+
+  set aguardandoInitialData(int? initialData) {
+    if (initialData != null) {
+      _aguardandoInitialData = initialData;
+    }
+  }
+
+  set pendenteInitialData(int? initialData) {
+    if (initialData != null) {
+      _pendenteInitialData = initialData;
+    }
+  }
 
   void openCloseFab(bool value) {
     _isFabOpened = value;

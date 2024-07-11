@@ -363,14 +363,16 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                     bottom: TabBar(
                       controller: TabController(length: 2, vsync: this, initialIndex: _myHomePageController.currentIndex),
                       onTap: (tappedIndex) {
-                        setState(() {
-                          if (tappedIndex == 0) {
-                            _myHomePageController.changeIcon(FontAwesomeIcons.file);
-                            _myHomePageController.changeDataFilter("Todas");
-                            _myHomePageController.changeStatusFilter("Nenhum");
-                          }
-                          _myHomePageController.changeCurrentIndex(tappedIndex);
-                        });
+                        setState(
+                          () {
+                            if (tappedIndex == 0) {
+                              _myHomePageController.changeIcon(FontAwesomeIcons.file);
+                              _myHomePageController.changeDataFilter("Todas");
+                              _myHomePageController.changeStatusFilter("Nenhum");
+                            }
+                            _myHomePageController.changeCurrentIndex(tappedIndex);
+                          },
+                        );
                       },
                       tabs: tabs,
                     ),
