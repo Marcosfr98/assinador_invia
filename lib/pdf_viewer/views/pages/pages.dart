@@ -1,4 +1,3 @@
-import "package:assinador_invia/my_home_page/controllers/controllers.dart";
 import "package:flutter/material.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
 import "package:share_plus/share_plus.dart";
@@ -16,8 +15,6 @@ class PdfViewer extends StatefulWidget {
 class _PdfViewerState extends State<PdfViewer> {
   double _downloadProgress = 0.0;
   bool _isLoading = false;
-  final MyHomePageController _myHomePageController =
-      MyHomePageController.instance;
 
   @override
   Widget build(BuildContext context) {
@@ -76,8 +73,7 @@ class _PdfViewerState extends State<PdfViewer> {
                           ? CircularProgressIndicator(
                               value: _downloadProgress / 100,
                               backgroundColor: Colors.blueAccent,
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                             )
                           : FaIcon(FontAwesomeIcons.download),
                       style: ElevatedButton.styleFrom(

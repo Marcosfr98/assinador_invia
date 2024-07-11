@@ -99,7 +99,7 @@ class MyHomePageController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void changeIsSeraching(bool value) {
+  void changeIsSearching(bool value) {
     _isSearching = value;
     notifyListeners();
   }
@@ -137,7 +137,7 @@ class MyHomePageController extends ChangeNotifier {
   void dismiss() {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       _instance.changeSearch("");
-      _instance.changeIsSeraching(false);
+      _instance.changeIsSearching(false);
       _instance.changeDidType(false);
       _instance.searchingController.clear();
       _instance.changeStatusFilter("");
