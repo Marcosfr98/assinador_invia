@@ -1,6 +1,3 @@
-import "dart:math" as math;
-
-import "package:animated_icon/animated_icon.dart";
 import "package:assinador_invia/my_home_page/controllers/controllers.dart";
 import "package:assinador_invia/my_home_page/models/assinantes_fluxo_model.dart";
 import "package:assinador_invia/my_home_page/models/fluxos_aguardando.dart";
@@ -10,14 +7,12 @@ import "package:assinador_invia/my_home_page/services/api.dart";
 import "package:assinador_invia/my_home_page/services/db.dart";
 import "package:assinador_invia/my_home_page/services/local_db.dart";
 import "package:assinador_invia/my_home_page/views/pages/pages.dart";
-import "package:assinador_invia/utils/constants.dart";
 import "package:flutter/material.dart";
 import "package:flutter_screenutil/flutter_screenutil.dart";
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
 import "package:get/get.dart";
 import "package:google_fonts/google_fonts.dart";
 import "package:shared_preferences/shared_preferences.dart";
-import "package:syncfusion_flutter_pdfviewer/pdfviewer.dart";
 
 class InicioWidget extends StatefulWidget {
   const InicioWidget({super.key});
@@ -738,82 +733,99 @@ class _DestinatarioWidgetState extends State<DestinatarioWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: _future,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData) {
-              List<AssinanteFluxoModel> assinantes = snapshot.data;
-              return SizedBox(
-                height: assinantes.length + 100,
-                width: MediaQuery.of(context).size.width,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: assinantes.length,
-                  itemBuilder: (context, index) {
-                    return Row(
-                      children: [
-                        SizedBox(
-                          height: 100.h,
-                          width: (MediaQuery.of(context).size.width * .85) - 24,
-                          child: ListTile(
-                            isThreeLine: true,
-                            leading: CircleAvatar(
-                              radius: 25,
-                              backgroundColor: Colors.blueAccent,
-                              child: Center(
-                                child: Text(
-                                  assinantes[index].desnome![0],
-                                  style: GoogleFonts.nunito(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+    return Column(
+      children: [
+        Text(
+          "Destinatários",
+          style: GoogleFonts.nunito(fontSize: 20.sp, fontWeight: FontWeight.w700),
+        ),
+        SizedBox(
+          height: 24,
+        ),
+        FutureBuilder(
+          future: _future,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasData) {
+                List<AssinanteFluxoModel> assinantes = snapshot.data;
+                return SizedBox(
+                  height: assinantes.length + 100,
+                  width: MediaQuery.of(context).size.width,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: assinantes.length,
+                    itemBuilder: (context, index) {
+                      return Row(
+                        children: [
+                          SizedBox(
+                            height: 100.h,
+                            width: (MediaQuery.of(context).size.width * .85) - 24,
+                            child: ListTile(
+                              isThreeLine: true,
+                              leading: CircleAvatar(
+                                radius: 25,
+                                backgroundColor: Colors.blueAccent,
+                                child: Center(
+                                  child: Text(
+                                    assinantes[index].desnome![0],
+                                    style: GoogleFonts.nunito(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                                  ),
                                 ),
                               ),
-                            ),
-                            title: Text(
-                              assinantes[index].desnome ?? "",
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 2,
-                            ),
-                            subtitle: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  assinantes[index].desemail ?? "",
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                ),
-                                Builder(builder: (context) {
-                                  if (assinantes[index].assinado != null && assinantes[index].assinado!.isNotEmpty && assinantes[index].assinado == "1") {
-                                    return Text(
-                                      "Já assinou",
-                                      style: GoogleFonts.nunito(fontSize: 16.sp, color: Colors.green),
-                                    );
-                                  } else if (assinantes[index].assinado != null && assinantes[index].assinado!.isNotEmpty && assinantes[index].assinado == "0") {
-                                    return Text(
-                                      "Assinatura necessária",
-                                      style: GoogleFonts.nunito(fontSize: 16.sp, color: Colors.red),
-                                    );
-                                  } else {
-                                    return Text("Sem informações");
-                                  }
-                                }),
-                              ],
+                              title: Text(
+                                assinantes[index].desnome ?? "",
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ),
+                              subtitle: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    assinantes[index].desemail ?? "",
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                  Builder(builder: (context) {
+                                    if (assinantes[index].assinado != null && assinantes[index].assinado!.isNotEmpty && assinantes[index].assinado == "1") {
+                                      return Text(
+                                        "Já assinou",
+                                        style: GoogleFonts.nunito(fontSize: 16.sp, color: Colors.green),
+                                      );
+                                    } else if (assinantes[index].assinado != null && assinantes[index].assinado!.isNotEmpty && assinantes[index].assinado == "0") {
+                                      return Text(
+                                        "Assinatura necessária",
+                                        style: GoogleFonts.nunito(fontSize: 16.sp, color: Colors.red),
+                                      );
+                                    } else {
+                                      return Text("Sem informações");
+                                    }
+                                  }),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              );
+                        ],
+                      );
+                    },
+                  ),
+                );
+              }
             }
-          }
-          return SizedBox();
-        });
+            return SizedBox();
+          },
+        ),
+        Divider(
+          height: 32,
+          thickness: 1.r,
+          color: Colors.black.withOpacity(.25),
+        ),
+      ],
+    );
   }
 }
 
@@ -1083,7 +1095,7 @@ class _ListaDeDocumentosState extends State<ListaDeDocumentos> {
           children: [
             Container(
               color: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 24),
+              padding: EdgeInsets.symmetric(horizontal: 24.r),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1142,214 +1154,155 @@ class _ListaDeDocumentosState extends State<ListaDeDocumentos> {
                   SizedBox(
                     height: 24,
                   ),
-                  Text(
-                    "Destinatários",
-                    style: GoogleFonts.nunito(fontSize: 20.sp, fontWeight: FontWeight.w700),
-                  ),
-                  SizedBox(
-                    height: 24,
-                  ),
-                  DestinatarioWidget(
-                    fluxo: widget.item,
-                  ),
                 ],
               ),
             ),
-            Divider(
-              height: 32,
-              thickness: 1.r,
-              color: Colors.black.withOpacity(.25),
+            DestinatarioWidget(
+              fluxo: widget.item,
             ),
+            Container(
+              color: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 24.r),
+              child: Column(
+                children: [
+                  Text(
+                    "Instruções para a assinatura",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 12.r,
+                  ),
+                  Text(
+                    "1 - Clique no botão abaixo",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 12.r,
+                  ),
+                  Text(
+                    "2 - Você será redirecionado para um link externo. Clique em assinar",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 12.r,
+                  ),
+                  Text(
+                    "3 - Será enviado um código via WhatsApp. Preencha no campo solicitado",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 12.r,
+                  ),
+                  Text(
+                    "4 - Pronto! Sua assinatura será contabilizada e os demais assinantes serão notificados",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            )
           ],
         ),
       );
     } else {
-      return SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              color: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        "Remetente: ",
-                        style: GoogleFonts.nunito(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w800,
-                        ),
+      return Column(
+        children: [
+          Container(
+            color: Colors.white,
+            padding: EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      "Remetente: ",
+                      style: GoogleFonts.nunito(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w800,
                       ),
-                      Text(
-                        widget.item.desdocnome ?? "",
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: GoogleFonts.nunito(fontSize: 16.sp),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "Descrição: ",
-                        style: GoogleFonts.nunito(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      Text(
-                        widget.item.desdescricao,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: GoogleFonts.nunito(fontSize: 16.sp),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        "Enviado: ",
-                        style: GoogleFonts.nunito(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      Text(
-                        widget.item.dtcadastro,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: GoogleFonts.nunito(fontSize: 16.sp),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 24,
-                  ),
-                  Text(
-                    "Destinatários",
-                    style: GoogleFonts.nunito(fontSize: 20.sp, fontWeight: FontWeight.w700),
-                  ),
-                  SizedBox(
-                    height: 24,
-                  ),
-                  DestinatarioWidget(
-                    fluxo: widget.item,
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 24.h,
-            ),
-            Builder(
-              builder: (context) {
-                if (widget.item.desdocassinado != null && widget.item.desdocassinado!.isNotEmpty) {
-                  return SizedBox(
-                    height: screenHeight * .8,
-                    child: Stack(
-                      children: [
-                        SfPdfViewer.network(
-                          maxZoomLevel: 6,
-                          onZoomLevelChanged: (pdfZoomDetails) {
-                            if (pdfZoomDetails.newZoomLevel > 1) {
-                              print("teco");
-                              _myHomePageController.changeScrollBehavior(
-                                ScrollBehavior().copyWith(
-                                  physics: BouncingScrollPhysics(
-                                    parent: NeverScrollableScrollPhysics(),
-                                  ),
-                                ),
-                              );
-                            } else {
-                              _myHomePageController.changeScrollBehavior(
-                                ScrollBehavior().copyWith(
-                                  physics: BouncingScrollPhysics(
-                                    parent: AlwaysScrollableScrollPhysics(),
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                          onPageChanged: (details) {
-                            _myHomePageController.changeIsFirstPage(details.isFirstPage);
-                            _myHomePageController.changeIsLastPage(details.isLastPage);
-                          },
-                          scrollDirection: PdfScrollDirection.horizontal,
-                          widget.item.desdocassinado ?? "",
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            AnimatedBuilder(
-                                animation: _myHomePageController,
-                                builder: (context, child) {
-                                  if (!_myHomePageController.isFirstPage) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(left: 8),
-                                      child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Transform.rotate(
-                                          angle: math.pi / 2,
-                                          child: AnimateIcon(
-                                            key: UniqueKey(),
-                                            onTap: () {},
-                                            iconType: IconType.continueAnimation,
-                                            height: 70,
-                                            width: 70,
-                                            color: Colors.black,
-                                            animateIcon: AnimateIcons.downArrow,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    return SizedBox();
-                                  }
-                                }),
-                            AnimatedBuilder(
-                                animation: _myHomePageController,
-                                builder: (context, child) {
-                                  if (!_myHomePageController.isLastPage) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(right: 8),
-                                      child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Transform.rotate(
-                                          angle: math.pi / -2,
-                                          child: AnimateIcon(
-                                            key: UniqueKey(),
-                                            onTap: () {},
-                                            iconType: IconType.continueAnimation,
-                                            height: 70,
-                                            width: 70,
-                                            color: Colors.black,
-                                            animateIcon: AnimateIcons.downArrow,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    return SizedBox();
-                                  }
-                                }),
-                          ],
-                        ),
-                      ],
                     ),
-                  );
-                } else {
-                  return Center(
-                    child: Text("Nenhum documento encontrado!"),
-                  );
-                }
-              },
+                    Text(
+                      widget.item.desdocnome ?? "",
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: GoogleFonts.nunito(fontSize: 16.sp),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "Descrição: ",
+                      style: GoogleFonts.nunito(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    Text(
+                      widget.item.desdescricao,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: GoogleFonts.nunito(fontSize: 16.sp),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(
+                      "Enviado: ",
+                      style: GoogleFonts.nunito(
+                        fontSize: 18.sp,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    Text(
+                      widget.item.dtcadastro,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      style: GoogleFonts.nunito(fontSize: 16.sp),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 24,
+                ),
+                Text(
+                  "Destinatários",
+                  style: GoogleFonts.nunito(fontSize: 20.sp, fontWeight: FontWeight.w700),
+                ),
+                SizedBox(
+                  height: 24,
+                ),
+                DestinatarioWidget(
+                  fluxo: widget.item,
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          SizedBox(
+            height: 24.h,
+          ),
+        ],
       );
     }
   }
