@@ -5,7 +5,6 @@ import "package:assinador_invia/my_home_page/models/fluxos_finalizados.dart";
 import "package:assinador_invia/my_home_page/models/fluxos_pendentes.dart";
 import "package:assinador_invia/my_home_page/services/api.dart";
 import "package:assinador_invia/my_home_page/services/db.dart";
-import "package:assinador_invia/my_home_page/services/local_db.dart";
 import "package:assinador_invia/my_home_page/views/pages/pages.dart";
 import "package:flutter/material.dart";
 import "package:flutter_screenutil/flutter_screenutil.dart";
@@ -24,18 +23,19 @@ class InicioWidget extends StatefulWidget {
 class _InicioWidgetState extends State<InicioWidget> {
   final _myHomePageApiServices = MyHomePageApiServices.instance;
   final _myHomePageController = MyHomePageController.instance;
-  final _localPersistance = LocalPersistence.instance;
   late Future _futureActionNedded;
   late Future _futureWaitingOthers;
   bool _didFilter = false;
 
   Future<List<FluxoAguardandoModel>> getNeededAction() async {
-    List<FluxoAguardandoModel> _fluxoAguardandoModel = await _myHomePageApiServices.getFluxosAguardando();
+    List<FluxoAguardandoModel> _fluxoAguardandoModel =
+        await _myHomePageApiServices.getFluxosAguardando();
     return _fluxoAguardandoModel;
   }
 
   Future<List<FluxosPendentesModel>> getWaitingOthers() async {
-    List<FluxosPendentesModel> _fluxosPendentesModel = await _myHomePageApiServices.getFluxosPendentes();
+    List<FluxosPendentesModel> _fluxosPendentesModel =
+        await _myHomePageApiServices.getFluxosPendentes();
     return _fluxosPendentesModel;
   }
 
@@ -70,7 +70,8 @@ class _InicioWidgetState extends State<InicioWidget> {
                           builder: (context, child) {
                             return InkWell(
                               onTap: () {
-                                _myHomePageController.changeStatusFilter("Aguardando");
+                                _myHomePageController
+                                    .changeStatusFilter("Aguardando");
                                 _myHomePageController.changeDataFilter("Todos");
                                 _myHomePageController.changeCurrentIndex(1);
                               },
@@ -80,16 +81,19 @@ class _InicioWidgetState extends State<InicioWidget> {
                                   color: Color(0xFFEFEFEF),
                                 ),
                                 height: 100.h,
-                                width: (MediaQuery.of(context).size.width / 2) - 36,
+                                width: (MediaQuery.of(context).size.width / 2) -
+                                    36,
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     FutureBuilder(
                                         future: _futureActionNedded,
-                                        initialData: _myHomePageController.aguardandoInitialData,
+                                        initialData: _myHomePageController
+                                            .aguardandoInitialData,
                                         builder: (context, snapshot) {
-                                          if (snapshot.connectionState == ConnectionState.waiting) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
                                             return Builder(
                                               builder: (context) {
                                                 if (snapshot.data != null) {
@@ -111,7 +115,9 @@ class _InicioWidgetState extends State<InicioWidget> {
                                                 }
                                               },
                                             );
-                                          } else if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                                          } else if (snapshot.connectionState ==
+                                                  ConnectionState.done &&
+                                              snapshot.hasData) {
                                             return Text(
                                               snapshot.data!.length.toString(),
                                               style: GoogleFonts.nunito(
@@ -134,7 +140,9 @@ class _InicioWidgetState extends State<InicioWidget> {
                                     Text(
                                       "Ação necessária",
                                       textAlign: TextAlign.center,
-                                      style: GoogleFonts.nunito(fontSize: 14.sp, fontWeight: FontWeight.w700),
+                                      style: GoogleFonts.nunito(
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w700),
                                     ),
                                   ],
                                 ),
@@ -160,9 +168,11 @@ class _InicioWidgetState extends State<InicioWidget> {
                             children: [
                               FutureBuilder(
                                   future: _futureWaitingOthers,
-                                  initialData: _myHomePageController.pendenteInitialData,
+                                  initialData:
+                                      _myHomePageController.pendenteInitialData,
                                   builder: (context, snapshot) {
-                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                    if (snapshot.connectionState ==
+                                        ConnectionState.waiting) {
                                       return Builder(
                                         builder: (context) {
                                           if (snapshot.data != null) {
@@ -184,7 +194,9 @@ class _InicioWidgetState extends State<InicioWidget> {
                                           }
                                         },
                                       );
-                                    } else if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
+                                    } else if (snapshot.connectionState ==
+                                            ConnectionState.done &&
+                                        snapshot.hasData) {
                                       return Text(
                                         snapshot.data!.length.toString(),
                                         style: GoogleFonts.nunito(
@@ -207,7 +219,9 @@ class _InicioWidgetState extends State<InicioWidget> {
                               Text(
                                 "Aguardando outros",
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.nunito(fontSize: 14.sp, fontWeight: FontWeight.w700),
+                                style: GoogleFonts.nunito(
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w700),
                               ),
                             ],
                           ),
@@ -225,7 +239,9 @@ class _InicioWidgetState extends State<InicioWidget> {
                       });
                     },
                     leading: FaIcon(
-                      _didFilter ? FontAwesomeIcons.arrowUpWideShort : FontAwesomeIcons.arrowDownWideShort,
+                      _didFilter
+                          ? FontAwesomeIcons.arrowUpWideShort
+                          : FontAwesomeIcons.arrowDownWideShort,
                       size: 18.sp,
                     ),
                     title: Text(
@@ -260,7 +276,8 @@ class DocumentosItemWidget extends StatefulWidget {
 }
 
 class _DocumentosItemWidgetState extends State<DocumentosItemWidget> {
-  final MyHomePageController _myHomePageController = MyHomePageController.instance;
+  final MyHomePageController _myHomePageController =
+      MyHomePageController.instance;
   late Future _futureFluxos;
   late Future _futurePendentes;
   late Future _futureFinalizados;
@@ -300,14 +317,34 @@ class _DocumentosItemWidgetState extends State<DocumentosItemWidget> {
                   return Center(
                     child: CircularProgressIndicator(),
                   );
-                } else if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-                  List<FluxoAguardandoModel> fluxoAguardandoModel = snapshot.data![0];
-                  List<FluxosPendentesModel> fluxoPendentesModel = snapshot.data![1];
-                  List<FluxosFinalizadosModel> fluxoFinalizadosModel = snapshot.data![2];
-                  final results1 = fluxoAguardandoModel.where((item) => item.desnome!.toLowerCase().contains(_myHomePageController.search.toLowerCase())).toList();
-                  final results2 = fluxoPendentesModel.where((item) => item.desdocnome!.toLowerCase().contains(_myHomePageController.search.toLowerCase())).toList();
-                  final results3 = fluxoFinalizadosModel.where((item) => item.desdocnome!.toLowerCase().contains(_myHomePageController.search.toLowerCase())).toList();
-                  var _filteredResults = <dynamic>[...results1, ...results2, ...results3];
+                } else if (snapshot.connectionState == ConnectionState.done &&
+                    snapshot.hasData) {
+                  List<FluxoAguardandoModel> fluxoAguardandoModel =
+                      snapshot.data![0];
+                  List<FluxosPendentesModel> fluxoPendentesModel =
+                      snapshot.data![1];
+                  List<FluxosFinalizadosModel> fluxoFinalizadosModel =
+                      snapshot.data![2];
+                  final results1 = fluxoAguardandoModel
+                      .where((item) => item.desnome!
+                          .toLowerCase()
+                          .contains(_myHomePageController.search.toLowerCase()))
+                      .toList();
+                  final results2 = fluxoPendentesModel
+                      .where((item) => item.desdocnome!
+                          .toLowerCase()
+                          .contains(_myHomePageController.search.toLowerCase()))
+                      .toList();
+                  final results3 = fluxoFinalizadosModel
+                      .where((item) => item.desdocnome!
+                          .toLowerCase()
+                          .contains(_myHomePageController.search.toLowerCase()))
+                      .toList();
+                  var _filteredResults = <dynamic>[
+                    ...results1,
+                    ...results2,
+                    ...results3
+                  ];
                   return ListView.builder(
                     itemCount: _filteredResults.length,
                     itemBuilder: (context, index) => Builder(
@@ -319,17 +356,21 @@ class _DocumentosItemWidgetState extends State<DocumentosItemWidget> {
                             date: _filteredResults[index].dtassinatura ?? "",
                             item: _filteredResults[index],
                           );
-                        } else if (_filteredResults[index] is FluxosPendentesModel) {
+                        } else if (_filteredResults[index]
+                            is FluxosPendentesModel) {
                           return CustomDocumentListTitle(
                             title: _filteredResults[index].desdocnome ?? "",
-                            subtitle: _filteredResults[index].desdescricao ?? "",
+                            subtitle:
+                                _filteredResults[index].desdescricao ?? "",
                             date: _filteredResults[index].dtcadastro ?? "",
                             item: _filteredResults[index],
                           );
-                        } else if (_filteredResults[index] is FluxosFinalizadosModel) {
+                        } else if (_filteredResults[index]
+                            is FluxosFinalizadosModel) {
                           return CustomDocumentListTitle(
                             title: _filteredResults[index].desdocnome ?? "",
-                            subtitle: _filteredResults[index].desdescricao ?? "",
+                            subtitle:
+                                _filteredResults[index].desdescricao ?? "",
                             date: _filteredResults[index].dtcadastro ?? "",
                             item: _filteredResults[index],
                           );
@@ -353,7 +394,8 @@ class _DocumentosItemWidgetState extends State<DocumentosItemWidget> {
                     );
                   } else if (snapshot.connectionState == ConnectionState.done) {
                     if (snapshot.hasData) {
-                      List<FluxoAguardandoModel> fluxoAguardandoModel = snapshot.data!;
+                      List<FluxoAguardandoModel> fluxoAguardandoModel =
+                          snapshot.data!;
                       return Expanded(
                         child: Container(
                           color: Colors.white,
@@ -361,76 +403,118 @@ class _DocumentosItemWidgetState extends State<DocumentosItemWidget> {
                           child: ListView.builder(
                             itemCount: fluxoAguardandoModel.length,
                             itemBuilder: (context, index) {
-                              if (_myHomePageController.groupValueData == "Todos") {
+                              if (_myHomePageController.groupValueData ==
+                                  "Todos") {
                                 return CustomDocumentListTitle(
-                                  title: fluxoAguardandoModel[index].desnome ?? "",
-                                  subtitle: fluxoAguardandoModel[index].descpf ?? "",
-                                  date: fluxoAguardandoModel[index].dtassinatura ?? "",
+                                  title:
+                                      fluxoAguardandoModel[index].desnome ?? "",
+                                  subtitle:
+                                      fluxoAguardandoModel[index].descpf ?? "",
+                                  date: fluxoAguardandoModel[index]
+                                          .dtassinatura ??
+                                      "",
                                   item: fluxoAguardandoModel[index],
                                 );
-                              } else if (_myHomePageController.groupValueData == "Últimos 12 meses" &&
-                                  DateTime.parse(fluxoAguardandoModel[index].dtassinatura!).isBefore(DateTime.now()) &&
-                                  DateTime.parse(fluxoAguardandoModel[index].dtassinatura!).isAfter(
+                              } else if (_myHomePageController.groupValueData ==
+                                      "Últimos 12 meses" &&
+                                  DateTime.parse(fluxoAguardandoModel[index].dtassinatura!)
+                                      .isBefore(DateTime.now()) &&
+                                  DateTime.parse(fluxoAguardandoModel[index].dtassinatura!)
+                                      .isAfter(
                                     DateTime.now().subtract(
                                       Duration(days: 365),
                                     ),
                                   )) {
                                 return CustomDocumentListTitle(
-                                  title: fluxoAguardandoModel[index].desnome ?? "",
-                                  subtitle: fluxoAguardandoModel[index].descpf ?? "",
-                                  date: fluxoAguardandoModel[index].dtassinatura ?? "",
+                                  title:
+                                      fluxoAguardandoModel[index].desnome ?? "",
+                                  subtitle:
+                                      fluxoAguardandoModel[index].descpf ?? "",
+                                  date: fluxoAguardandoModel[index]
+                                          .dtassinatura ??
+                                      "",
                                   item: fluxoAguardandoModel[index],
                                 );
-                              } else if (_myHomePageController.groupValueData == "Últimos 6 meses" &&
-                                  DateTime.parse(fluxoAguardandoModel[index].dtassinatura!).isBefore(DateTime.now()) &&
-                                  DateTime.parse(fluxoAguardandoModel[index].dtassinatura!).isAfter(
+                              } else if (_myHomePageController.groupValueData ==
+                                      "Últimos 6 meses" &&
+                                  DateTime.parse(fluxoAguardandoModel[index].dtassinatura!)
+                                      .isBefore(DateTime.now()) &&
+                                  DateTime.parse(fluxoAguardandoModel[index].dtassinatura!)
+                                      .isAfter(
                                     DateTime.now().subtract(
                                       Duration(days: 180),
                                     ),
                                   )) {
                                 return CustomDocumentListTitle(
-                                  title: fluxoAguardandoModel[index].desnome ?? "",
-                                  subtitle: fluxoAguardandoModel[index].descpf ?? "",
-                                  date: fluxoAguardandoModel[index].dtassinatura ?? "",
+                                  title:
+                                      fluxoAguardandoModel[index].desnome ?? "",
+                                  subtitle:
+                                      fluxoAguardandoModel[index].descpf ?? "",
+                                  date: fluxoAguardandoModel[index]
+                                          .dtassinatura ??
+                                      "",
                                   item: fluxoAguardandoModel[index],
                                 );
-                              } else if (_myHomePageController.groupValueData == "Últimos 30 dias" &&
-                                  DateTime.parse(fluxoAguardandoModel[index].dtassinatura!).isBefore(DateTime.now()) &&
-                                  DateTime.parse(fluxoAguardandoModel[index].dtassinatura!).isAfter(
+                              } else if (_myHomePageController.groupValueData ==
+                                      "Últimos 30 dias" &&
+                                  DateTime.parse(fluxoAguardandoModel[index].dtassinatura!)
+                                      .isBefore(DateTime.now()) &&
+                                  DateTime.parse(fluxoAguardandoModel[index].dtassinatura!)
+                                      .isAfter(
                                     DateTime.now().subtract(
                                       Duration(days: 30),
                                     ),
                                   )) {
                                 return CustomDocumentListTitle(
-                                  title: fluxoAguardandoModel[index].desnome ?? "",
-                                  subtitle: fluxoAguardandoModel[index].descpf ?? "",
-                                  date: fluxoAguardandoModel[index].dtassinatura ?? "",
+                                  title:
+                                      fluxoAguardandoModel[index].desnome ?? "",
+                                  subtitle:
+                                      fluxoAguardandoModel[index].descpf ?? "",
+                                  date: fluxoAguardandoModel[index]
+                                          .dtassinatura ??
+                                      "",
                                   item: fluxoAguardandoModel[index],
                                 );
-                              } else if (_myHomePageController.groupValueData == "Semana passada" &&
-                                  DateTime.parse(fluxoAguardandoModel[index].dtassinatura!).isBefore(DateTime.now()) &&
-                                  DateTime.parse(fluxoAguardandoModel[index].dtassinatura!).isAfter(
+                              } else if (_myHomePageController.groupValueData ==
+                                      "Semana passada" &&
+                                  DateTime.parse(fluxoAguardandoModel[index].dtassinatura!)
+                                      .isBefore(DateTime.now()) &&
+                                  DateTime.parse(fluxoAguardandoModel[index].dtassinatura!)
+                                      .isAfter(
                                     DateTime.now().subtract(
                                       Duration(days: 7),
                                     ),
                                   )) {
                                 return CustomDocumentListTitle(
-                                  title: fluxoAguardandoModel[index].desnome ?? "",
-                                  subtitle: fluxoAguardandoModel[index].descpf ?? "",
-                                  date: fluxoAguardandoModel[index].dtassinatura ?? "",
+                                  title:
+                                      fluxoAguardandoModel[index].desnome ?? "",
+                                  subtitle:
+                                      fluxoAguardandoModel[index].descpf ?? "",
+                                  date: fluxoAguardandoModel[index]
+                                          .dtassinatura ??
+                                      "",
                                   item: fluxoAguardandoModel[index],
                                 );
-                              } else if (_myHomePageController.groupValueData == "Últimas 24 horas" &&
-                                  DateTime.parse(fluxoAguardandoModel[index].dtassinatura!).isBefore(DateTime.now()) &&
-                                  DateTime.parse(fluxoAguardandoModel[index].dtassinatura!).isAfter(
+                              } else if (_myHomePageController.groupValueData ==
+                                      "Últimas 24 horas" &&
+                                  DateTime.parse(fluxoAguardandoModel[index]
+                                          .dtassinatura!)
+                                      .isBefore(DateTime.now()) &&
+                                  DateTime.parse(fluxoAguardandoModel[index]
+                                          .dtassinatura!)
+                                      .isAfter(
                                     DateTime.now().subtract(
                                       Duration(days: 1),
                                     ),
                                   )) {
                                 return CustomDocumentListTitle(
-                                  title: fluxoAguardandoModel[index].desnome ?? "",
-                                  subtitle: fluxoAguardandoModel[index].descpf ?? "",
-                                  date: fluxoAguardandoModel[index].dtassinatura ?? "",
+                                  title:
+                                      fluxoAguardandoModel[index].desnome ?? "",
+                                  subtitle:
+                                      fluxoAguardandoModel[index].descpf ?? "",
+                                  date: fluxoAguardandoModel[index]
+                                          .dtassinatura ??
+                                      "",
                                   item: fluxoAguardandoModel[index],
                                 );
                               }
@@ -460,7 +544,8 @@ class _DocumentosItemWidgetState extends State<DocumentosItemWidget> {
                     );
                   } else if (snapshot.connectionState == ConnectionState.done) {
                     if (snapshot.hasData) {
-                      List<FluxosPendentesModel> fluxosPendentesModel = snapshot.data!;
+                      List<FluxosPendentesModel> fluxosPendentesModel =
+                          snapshot.data!;
                       return Expanded(
                         child: Container(
                           color: Colors.white,
@@ -471,73 +556,130 @@ class _DocumentosItemWidgetState extends State<DocumentosItemWidget> {
                               return ListView.builder(
                                 itemCount: fluxosPendentesModel.length,
                                 itemBuilder: (context, index) {
-                                  if (_myHomePageController.groupValueData == "Todos") {
+                                  if (_myHomePageController.groupValueData ==
+                                      "Todos") {
                                     return CustomDocumentListTitle(
-                                      title: fluxosPendentesModel[index].desdocnome ?? "",
-                                      subtitle: fluxosPendentesModel[index].desdescricao ?? "",
-                                      date: fluxosPendentesModel[index].dtcadastro ?? "",
+                                      title: fluxosPendentesModel[index]
+                                              .desdocnome ??
+                                          "",
+                                      subtitle: fluxosPendentesModel[index]
+                                              .desdescricao ??
+                                          "",
+                                      date: fluxosPendentesModel[index]
+                                              .dtcadastro ??
+                                          "",
                                       item: fluxosPendentesModel[index],
                                     );
-                                  } else if (_myHomePageController.groupValueData == "Últimos 12 meses" &&
-                                      DateTime.parse(fluxosPendentesModel[index].dtcadastro!).isBefore(DateTime.now()) &&
-                                      DateTime.parse(fluxosPendentesModel[index].dtcadastro!).isAfter(
+                                  } else if (_myHomePageController.groupValueData ==
+                                          "Últimos 12 meses" &&
+                                      DateTime.parse(fluxosPendentesModel[index].dtcadastro!)
+                                          .isBefore(DateTime.now()) &&
+                                      DateTime.parse(fluxosPendentesModel[index].dtcadastro!)
+                                          .isAfter(
                                         DateTime.now().subtract(
                                           Duration(days: 365),
                                         ),
                                       )) {
                                     return CustomDocumentListTitle(
-                                      title: fluxosPendentesModel[index].desdocnome ?? "",
-                                      subtitle: fluxosPendentesModel[index].desdescricao ?? "",
-                                      date: fluxosPendentesModel[index].dtcadastro ?? "",
+                                      title: fluxosPendentesModel[index]
+                                              .desdocnome ??
+                                          "",
+                                      subtitle: fluxosPendentesModel[index]
+                                              .desdescricao ??
+                                          "",
+                                      date: fluxosPendentesModel[index]
+                                              .dtcadastro ??
+                                          "",
                                       item: fluxosPendentesModel[index],
                                     );
-                                  } else if (_myHomePageController.groupValueData == "Últimos 6 meses" &&
-                                      DateTime.parse(fluxosPendentesModel[index].dtcadastro!).isAfter(
-                                        DateTime.now().subtract(Duration(days: 180)),
+                                  } else if (_myHomePageController
+                                              .groupValueData ==
+                                          "Últimos 6 meses" &&
+                                      DateTime.parse(fluxosPendentesModel[index].dtcadastro!)
+                                          .isAfter(
+                                        DateTime.now()
+                                            .subtract(Duration(days: 180)),
                                       )) {
                                     return CustomDocumentListTitle(
-                                      title: fluxosPendentesModel[index].desdocnome ?? "",
-                                      subtitle: fluxosPendentesModel[index].desdescricao ?? "",
-                                      date: fluxosPendentesModel[index].dtcadastro ?? "",
+                                      title: fluxosPendentesModel[index]
+                                              .desdocnome ??
+                                          "",
+                                      subtitle: fluxosPendentesModel[index]
+                                              .desdescricao ??
+                                          "",
+                                      date: fluxosPendentesModel[index]
+                                              .dtcadastro ??
+                                          "",
                                       item: fluxosPendentesModel[index],
                                     );
-                                  } else if (_myHomePageController.groupValueData == "Últimos 30 dias" &&
-                                      DateTime.parse(fluxosPendentesModel[index].dtcadastro!).isBefore(DateTime.now()) &&
-                                      DateTime.parse(fluxosPendentesModel[index].dtcadastro!).isAfter(
+                                  } else if (_myHomePageController
+                                              .groupValueData ==
+                                          "Últimos 30 dias" &&
+                                      DateTime.parse(fluxosPendentesModel[index].dtcadastro!)
+                                          .isBefore(DateTime.now()) &&
+                                      DateTime.parse(fluxosPendentesModel[index].dtcadastro!)
+                                          .isAfter(
                                         DateTime.now().subtract(
                                           Duration(days: 30),
                                         ),
                                       )) {
                                     return CustomDocumentListTitle(
-                                      title: fluxosPendentesModel[index].desdocnome ?? "",
-                                      subtitle: fluxosPendentesModel[index].desdescricao ?? "",
-                                      date: fluxosPendentesModel[index].dtcadastro ?? "",
+                                      title: fluxosPendentesModel[index]
+                                              .desdocnome ??
+                                          "",
+                                      subtitle: fluxosPendentesModel[index]
+                                              .desdescricao ??
+                                          "",
+                                      date: fluxosPendentesModel[index]
+                                              .dtcadastro ??
+                                          "",
                                       item: fluxosPendentesModel[index],
                                     );
-                                  } else if (_myHomePageController.groupValueData == "Semana passada" &&
-                                      DateTime.parse(fluxosPendentesModel[index].dtcadastro!).isBefore(DateTime.now()) &&
-                                      DateTime.parse(fluxosPendentesModel[index].dtcadastro!).isAfter(
+                                  } else if (_myHomePageController
+                                              .groupValueData ==
+                                          "Semana passada" &&
+                                      DateTime.parse(fluxosPendentesModel[index].dtcadastro!)
+                                          .isBefore(DateTime.now()) &&
+                                      DateTime.parse(fluxosPendentesModel[index].dtcadastro!)
+                                          .isAfter(
                                         DateTime.now().subtract(
                                           Duration(days: 7),
                                         ),
                                       )) {
                                     return CustomDocumentListTitle(
-                                      title: fluxosPendentesModel[index].desdocnome ?? "",
-                                      subtitle: fluxosPendentesModel[index].desdescricao ?? "",
-                                      date: fluxosPendentesModel[index].dtcadastro ?? "",
+                                      title: fluxosPendentesModel[index]
+                                              .desdocnome ??
+                                          "",
+                                      subtitle: fluxosPendentesModel[index]
+                                              .desdescricao ??
+                                          "",
+                                      date: fluxosPendentesModel[index]
+                                              .dtcadastro ??
+                                          "",
                                       item: fluxosPendentesModel[index],
                                     );
-                                  } else if (_myHomePageController.groupValueData == "Últimas 24 horas" &&
-                                      DateTime.parse(fluxosPendentesModel[index].dtcadastro!).isBefore(DateTime.now()) &&
-                                      DateTime.parse(fluxosPendentesModel[index].dtcadastro!).isAfter(
+                                  } else if (_myHomePageController
+                                              .groupValueData ==
+                                          "Últimas 24 horas" &&
+                                      DateTime.parse(fluxosPendentesModel[index].dtcadastro!)
+                                          .isBefore(DateTime.now()) &&
+                                      DateTime.parse(
+                                              fluxosPendentesModel[index].dtcadastro!)
+                                          .isAfter(
                                         DateTime.now().subtract(
                                           Duration(days: 1),
                                         ),
                                       )) {
                                     return CustomDocumentListTitle(
-                                      title: fluxosPendentesModel[index].desdocnome ?? "",
-                                      subtitle: fluxosPendentesModel[index].desdescricao ?? "",
-                                      date: fluxosPendentesModel[index].dtcadastro ?? "",
+                                      title: fluxosPendentesModel[index]
+                                              .desdocnome ??
+                                          "",
+                                      subtitle: fluxosPendentesModel[index]
+                                              .desdescricao ??
+                                          "",
+                                      date: fluxosPendentesModel[index]
+                                              .dtcadastro ??
+                                          "",
                                       item: fluxosPendentesModel[index],
                                     );
                                   }
@@ -559,7 +701,8 @@ class _DocumentosItemWidgetState extends State<DocumentosItemWidget> {
                   return SizedBox();
                 },
               );
-            } else if (_myHomePageController.groupValueStatus == "Finalizados") {
+            } else if (_myHomePageController.groupValueStatus ==
+                "Finalizados") {
               return FutureBuilder(
                 future: _futureFinalizados,
                 builder: (context, snapshot) {
@@ -569,7 +712,8 @@ class _DocumentosItemWidgetState extends State<DocumentosItemWidget> {
                     );
                   } else if (snapshot.connectionState == ConnectionState.done) {
                     if (snapshot.hasData) {
-                      List<FluxosFinalizadosModel> fluxosFinalizadosModel = snapshot.data!;
+                      List<FluxosFinalizadosModel> fluxosFinalizadosModel =
+                          snapshot.data!;
                       return Expanded(
                         child: Container(
                           color: Colors.white,
@@ -577,77 +721,134 @@ class _DocumentosItemWidgetState extends State<DocumentosItemWidget> {
                           child: ListView.builder(
                             itemCount: fluxosFinalizadosModel.length,
                             itemBuilder: (context, index) {
-                              if (_myHomePageController.groupValueData == "Todos") {
+                              if (_myHomePageController.groupValueData ==
+                                  "Todos") {
                                 return CustomDocumentListTitle(
-                                  title: fluxosFinalizadosModel[index].desdocnome ?? "",
-                                  subtitle: fluxosFinalizadosModel[index].desdescricao ?? "",
-                                  date: fluxosFinalizadosModel[index].dtcadastro ?? "",
+                                  title: fluxosFinalizadosModel[index]
+                                          .desdocnome ??
+                                      "",
+                                  subtitle: fluxosFinalizadosModel[index]
+                                          .desdescricao ??
+                                      "",
+                                  date: fluxosFinalizadosModel[index]
+                                          .dtcadastro ??
+                                      "",
                                   item: fluxosFinalizadosModel[index],
                                 );
-                              } else if (_myHomePageController.groupValueData == "Últimos 12 meses" &&
-                                  DateTime.parse(fluxosFinalizadosModel[index].dtcadastro!).isBefore(DateTime.now()) &&
-                                  DateTime.parse(fluxosFinalizadosModel[index].dtcadastro!).isAfter(
+                              } else if (_myHomePageController.groupValueData ==
+                                      "Últimos 12 meses" &&
+                                  DateTime.parse(fluxosFinalizadosModel[index].dtcadastro!)
+                                      .isBefore(DateTime.now()) &&
+                                  DateTime.parse(fluxosFinalizadosModel[index].dtcadastro!)
+                                      .isAfter(
                                     DateTime.now().subtract(
                                       Duration(days: 365),
                                     ),
                                   )) {
                                 return CustomDocumentListTitle(
-                                  title: fluxosFinalizadosModel[index].desdocnome ?? "",
-                                  subtitle: fluxosFinalizadosModel[index].desdescricao ?? "",
-                                  date: fluxosFinalizadosModel[index].dtcadastro ?? "",
+                                  title: fluxosFinalizadosModel[index]
+                                          .desdocnome ??
+                                      "",
+                                  subtitle: fluxosFinalizadosModel[index]
+                                          .desdescricao ??
+                                      "",
+                                  date: fluxosFinalizadosModel[index]
+                                          .dtcadastro ??
+                                      "",
                                   item: fluxosFinalizadosModel[index],
                                 );
-                              } else if (_myHomePageController.groupValueData == "Últimos 6 meses" &&
-                                  DateTime.parse(fluxosFinalizadosModel[index].dtcadastro!).isBefore(DateTime.now()) &&
-                                  DateTime.parse(fluxosFinalizadosModel[index].dtcadastro!).isAfter(
+                              } else if (_myHomePageController.groupValueData ==
+                                      "Últimos 6 meses" &&
+                                  DateTime.parse(fluxosFinalizadosModel[index].dtcadastro!)
+                                      .isBefore(DateTime.now()) &&
+                                  DateTime.parse(fluxosFinalizadosModel[index].dtcadastro!)
+                                      .isAfter(
                                     DateTime.now().subtract(
                                       Duration(days: 180),
                                     ),
                                   )) {
                                 return CustomDocumentListTitle(
-                                  title: fluxosFinalizadosModel[index].desdocnome ?? "",
-                                  subtitle: fluxosFinalizadosModel[index].desdescricao ?? "",
-                                  date: fluxosFinalizadosModel[index].dtcadastro ?? "",
+                                  title: fluxosFinalizadosModel[index]
+                                          .desdocnome ??
+                                      "",
+                                  subtitle: fluxosFinalizadosModel[index]
+                                          .desdescricao ??
+                                      "",
+                                  date: fluxosFinalizadosModel[index]
+                                          .dtcadastro ??
+                                      "",
                                   item: fluxosFinalizadosModel[index],
                                 );
-                              } else if (_myHomePageController.groupValueData == "Últimos 30 dias" &&
-                                  DateTime.parse(fluxosFinalizadosModel[index].dtcadastro!).isBefore(DateTime.now()) &&
-                                  DateTime.parse(fluxosFinalizadosModel[index].dtcadastro!).isAfter(
+                              } else if (_myHomePageController.groupValueData ==
+                                      "Últimos 30 dias" &&
+                                  DateTime.parse(fluxosFinalizadosModel[index].dtcadastro!)
+                                      .isBefore(DateTime.now()) &&
+                                  DateTime.parse(fluxosFinalizadosModel[index]
+                                          .dtcadastro!)
+                                      .isAfter(
                                     DateTime.now().subtract(
                                       Duration(days: 30),
                                     ),
                                   )) {
                                 return CustomDocumentListTitle(
-                                  title: fluxosFinalizadosModel[index].desdocnome ?? "",
-                                  subtitle: fluxosFinalizadosModel[index].desdescricao ?? "",
-                                  date: fluxosFinalizadosModel[index].dtcadastro ?? "",
+                                  title: fluxosFinalizadosModel[index]
+                                          .desdocnome ??
+                                      "",
+                                  subtitle: fluxosFinalizadosModel[index]
+                                          .desdescricao ??
+                                      "",
+                                  date: fluxosFinalizadosModel[index]
+                                          .dtcadastro ??
+                                      "",
                                   item: fluxosFinalizadosModel[index],
                                 );
-                              } else if (_myHomePageController.groupValueData == "Semana passada" &&
-                                  DateTime.parse(fluxosFinalizadosModel[index].dtcadastro!).isBefore(DateTime.now()) &&
-                                  DateTime.parse(fluxosFinalizadosModel[index].dtcadastro!).isAfter(
+                              } else if (_myHomePageController.groupValueData ==
+                                      "Semana passada" &&
+                                  DateTime.parse(fluxosFinalizadosModel[index]
+                                          .dtcadastro!)
+                                      .isBefore(DateTime.now()) &&
+                                  DateTime.parse(fluxosFinalizadosModel[index]
+                                          .dtcadastro!)
+                                      .isAfter(
                                     DateTime.now().subtract(
                                       Duration(days: 7),
                                     ),
                                   )) {
                                 return CustomDocumentListTitle(
-                                  title: fluxosFinalizadosModel[index].desdocnome ?? "",
-                                  subtitle: fluxosFinalizadosModel[index].desdescricao ?? "",
-                                  date: fluxosFinalizadosModel[index].dtcadastro ?? "",
+                                  title: fluxosFinalizadosModel[index]
+                                          .desdocnome ??
+                                      "",
+                                  subtitle: fluxosFinalizadosModel[index]
+                                          .desdescricao ??
+                                      "",
+                                  date: fluxosFinalizadosModel[index]
+                                          .dtcadastro ??
+                                      "",
                                   item: fluxosFinalizadosModel[index],
                                 );
                               }
-                              if (_myHomePageController.groupValueData == "Últimas 24 horas" &&
-                                  DateTime.parse(fluxosFinalizadosModel[index].dtcadastro!).isBefore(DateTime.now()) &&
-                                  DateTime.parse(fluxosFinalizadosModel[index].dtcadastro!).isAfter(
+                              if (_myHomePageController.groupValueData ==
+                                      "Últimas 24 horas" &&
+                                  DateTime.parse(fluxosFinalizadosModel[index]
+                                          .dtcadastro!)
+                                      .isBefore(DateTime.now()) &&
+                                  DateTime.parse(fluxosFinalizadosModel[index]
+                                          .dtcadastro!)
+                                      .isAfter(
                                     DateTime.now().subtract(
                                       Duration(days: 1),
                                     ),
                                   )) {
                                 return CustomDocumentListTitle(
-                                  title: fluxosFinalizadosModel[index].desdocnome ?? "",
-                                  subtitle: fluxosFinalizadosModel[index].desdescricao ?? "",
-                                  date: fluxosFinalizadosModel[index].dtcadastro ?? "",
+                                  title: fluxosFinalizadosModel[index]
+                                          .desdocnome ??
+                                      "",
+                                  subtitle: fluxosFinalizadosModel[index]
+                                          .desdescricao ??
+                                      "",
+                                  date: fluxosFinalizadosModel[index]
+                                          .dtcadastro ??
+                                      "",
                                   item: fluxosFinalizadosModel[index],
                                 );
                               }
@@ -722,7 +923,8 @@ class _DestinatarioWidgetState extends State<DestinatarioWidget> {
 
   @override
   void initState() {
-    _future = MyHomePageApiServices().getAssinantes(idFluxo: widget.fluxo.idassinatura!);
+    _future = MyHomePageApiServices()
+        .getAssinantes(idFluxo: widget.fluxo.idassinatura!);
     super.initState();
   }
 
@@ -733,99 +935,92 @@ class _DestinatarioWidgetState extends State<DestinatarioWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          "Destinatários",
-          style: GoogleFonts.nunito(fontSize: 20.sp, fontWeight: FontWeight.w700),
-        ),
-        SizedBox(
-          height: 24,
-        ),
-        FutureBuilder(
-          future: _future,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (snapshot.connectionState == ConnectionState.done) {
-              if (snapshot.hasData) {
-                List<AssinanteFluxoModel> assinantes = snapshot.data;
-                return SizedBox(
-                  height: assinantes.length + 100,
-                  width: MediaQuery.of(context).size.width,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: assinantes.length,
-                    itemBuilder: (context, index) {
-                      return Row(
-                        children: [
-                          SizedBox(
-                            height: 100.h,
-                            width: (MediaQuery.of(context).size.width * .85) - 24,
-                            child: ListTile(
-                              isThreeLine: true,
-                              leading: CircleAvatar(
-                                radius: 25,
-                                backgroundColor: Colors.blueAccent,
-                                child: Center(
-                                  child: Text(
-                                    assinantes[index].desnome![0],
-                                    style: GoogleFonts.nunito(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
-                                  ),
+    return FutureBuilder(
+        future: _future,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData) {
+              List<AssinanteFluxoModel> assinantes = snapshot.data;
+              return SizedBox(
+                height: assinantes.length + 100,
+                width: MediaQuery.of(context).size.width,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: assinantes.length,
+                  itemBuilder: (context, index) {
+                    return Row(
+                      children: [
+                        SizedBox(
+                          height: 100.h,
+                          width: (MediaQuery.of(context).size.width * .85) - 24,
+                          child: ListTile(
+                            isThreeLine: true,
+                            leading: CircleAvatar(
+                              radius: 25,
+                              backgroundColor: Colors.blueAccent,
+                              child: Center(
+                                child: Text(
+                                  assinantes[index].desnome![0],
+                                  style: GoogleFonts.nunito(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
                                 ),
                               ),
-                              title: Text(
-                                assinantes[index].desnome ?? "",
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                              ),
-                              subtitle: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    assinantes[index].desemail ?? "",
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                  Builder(builder: (context) {
-                                    if (assinantes[index].assinado != null && assinantes[index].assinado!.isNotEmpty && assinantes[index].assinado == "1") {
-                                      return Text(
-                                        "Já assinou",
-                                        style: GoogleFonts.nunito(fontSize: 16.sp, color: Colors.green),
-                                      );
-                                    } else if (assinantes[index].assinado != null && assinantes[index].assinado!.isNotEmpty && assinantes[index].assinado == "0") {
-                                      return Text(
-                                        "Assinatura necessária",
-                                        style: GoogleFonts.nunito(fontSize: 16.sp, color: Colors.red),
-                                      );
-                                    } else {
-                                      return Text("Sem informações");
-                                    }
-                                  }),
-                                ],
-                              ),
+                            ),
+                            title: Text(
+                              assinantes[index].desnome ?? "",
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
+                            ),
+                            subtitle: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  assinantes[index].desemail ?? "",
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                                Builder(builder: (context) {
+                                  if (assinantes[index].assinado != null &&
+                                      assinantes[index].assinado!.isNotEmpty &&
+                                      assinantes[index].assinado == "1") {
+                                    return Text(
+                                      "Já assinou",
+                                      style: GoogleFonts.nunito(
+                                          fontSize: 16.sp, color: Colors.green),
+                                    );
+                                  } else if (assinantes[index].assinado !=
+                                          null &&
+                                      assinantes[index].assinado!.isNotEmpty &&
+                                      assinantes[index].assinado == "0") {
+                                    return Text(
+                                      "Assinatura necessária",
+                                      style: GoogleFonts.nunito(
+                                          fontSize: 16.sp, color: Colors.red),
+                                    );
+                                  } else {
+                                    return Text("Sem informações");
+                                  }
+                                }),
+                              ],
                             ),
                           ),
-                        ],
-                      );
-                    },
-                  ),
-                );
-              }
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              );
             }
-            return SizedBox();
-          },
-        ),
-        Divider(
-          height: 32,
-          thickness: 1.r,
-          color: Colors.black.withOpacity(.25),
-        ),
-      ],
-    );
+          }
+          return SizedBox();
+        });
   }
 }
 
@@ -895,7 +1090,9 @@ class _FilterWidgetState extends State<FilterWidget> {
             animation: _myHomePageController,
             builder: (context, child) {
               return Text(
-                _myHomePageController.groupValueStatus.isEmpty ? "Nenhum" : _myHomePageController.groupValueStatus,
+                _myHomePageController.groupValueStatus.isEmpty
+                    ? "Nenhum"
+                    : _myHomePageController.groupValueStatus,
                 style: GoogleFonts.nunito(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w600,
@@ -915,7 +1112,9 @@ class _FilterWidgetState extends State<FilterWidget> {
             animation: _myHomePageController,
             builder: (context, child) {
               return Text(
-                _myHomePageController.groupValueData.isEmpty ? "Todas" : _myHomePageController.groupValueData,
+                _myHomePageController.groupValueData.isEmpty
+                    ? "Todas"
+                    : _myHomePageController.groupValueData,
                 style: GoogleFonts.nunito(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w600,
@@ -933,7 +1132,8 @@ class SearchingDocumentsWidget extends StatefulWidget {
   const SearchingDocumentsWidget({super.key});
 
   @override
-  State<SearchingDocumentsWidget> createState() => _SearchingDocumentsWidgetState();
+  State<SearchingDocumentsWidget> createState() =>
+      _SearchingDocumentsWidgetState();
 }
 
 class _SearchingDocumentsWidgetState extends State<SearchingDocumentsWidget> {
@@ -993,10 +1193,17 @@ class CustomDocumentListTitle extends StatefulWidget {
   final String? date;
   final dynamic item;
 
-  const CustomDocumentListTitle({super.key, required this.title, required this.subtitle, this.date, this.item, this.isRecent});
+  const CustomDocumentListTitle(
+      {super.key,
+      required this.title,
+      required this.subtitle,
+      this.date,
+      this.item,
+      this.isRecent});
 
   @override
-  State<CustomDocumentListTitle> createState() => _CustomDocumentListTitleState();
+  State<CustomDocumentListTitle> createState() =>
+      _CustomDocumentListTitleState();
 }
 
 class _CustomDocumentListTitleState extends State<CustomDocumentListTitle> {
@@ -1008,12 +1215,15 @@ class _CustomDocumentListTitleState extends State<CustomDocumentListTitle> {
           elevation: 2.r,
           child: IntrinsicHeight(
             child: ListTile(
-              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 12, horizontal: 24),
               isThreeLine: true,
               onTap: () async {
                 Get.to(
                   () => DetalhesDocumento(
-                    item: widget.isRecent != null && widget.isRecent! ? FluxoAguardandoModel.fromJson(widget.item) : widget.item,
+                    item: widget.isRecent != null && widget.isRecent!
+                        ? FluxoAguardandoModel.fromJson(widget.item)
+                        : widget.item,
                   ),
                 );
               },
@@ -1154,155 +1364,221 @@ class _ListaDeDocumentosState extends State<ListaDeDocumentos> {
                   SizedBox(
                     height: 24,
                   ),
+                  Text(
+                    "Destinatários",
+                    style: GoogleFonts.nunito(
+                        fontSize: 20.sp, fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(
+                    height: 24,
+                  ),
+                  DestinatarioWidget(
+                    fluxo: widget.item,
+                  ),
                 ],
               ),
             ),
-            DestinatarioWidget(
-              fluxo: widget.item,
+            Divider(
+              height: 32,
+              thickness: 1.r,
+              color: Colors.black.withOpacity(.25),
             ),
-            Container(
-              color: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 24.r),
-              child: Column(
-                children: [
-                  Text(
-                    "Instruções para a assinatura",
-                    style: GoogleFonts.montserrat(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 12.r,
-                  ),
-                  Text(
-                    "1 - Clique no botão abaixo",
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 12.r,
-                  ),
-                  Text(
-                    "2 - Você será redirecionado para um link externo. Clique em assinar",
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 12.r,
-                  ),
-                  Text(
-                    "3 - Será enviado um código via WhatsApp. Preencha no campo solicitado",
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 12.r,
-                  ),
-                  Text(
-                    "4 - Pronto! Sua assinatura será contabilizada e os demais assinantes serão notificados",
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
-            )
           ],
         ),
       );
     } else {
-      return Column(
-        children: [
-          Container(
-            color: Colors.white,
-            padding: EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      "Remetente: ",
-                      style: GoogleFonts.nunito(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w800,
+      return SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              color: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        "Remetente: ",
+                        style: GoogleFonts.nunito(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
-                    ),
-                    Text(
-                      widget.item.desdocnome ?? "",
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: GoogleFonts.nunito(fontSize: 16.sp),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "Descrição: ",
-                      style: GoogleFonts.nunito(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w800,
+                      Text(
+                        widget.item.desdocnome ?? "",
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: GoogleFonts.nunito(fontSize: 16.sp),
                       ),
-                    ),
-                    Text(
-                      widget.item.desdescricao,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: GoogleFonts.nunito(fontSize: 16.sp),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text(
-                      "Enviado: ",
-                      style: GoogleFonts.nunito(
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w800,
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        "Descrição: ",
+                        style: GoogleFonts.nunito(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
-                    ),
-                    Text(
-                      widget.item.dtcadastro,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      style: GoogleFonts.nunito(fontSize: 16.sp),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 24,
-                ),
-                Text(
-                  "Destinatários",
-                  style: GoogleFonts.nunito(fontSize: 20.sp, fontWeight: FontWeight.w700),
-                ),
-                SizedBox(
-                  height: 24,
-                ),
-                DestinatarioWidget(
-                  fluxo: widget.item,
-                ),
-              ],
+                      Text(
+                        widget.item.desdescricao,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: GoogleFonts.nunito(fontSize: 16.sp),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        "Enviado: ",
+                        style: GoogleFonts.nunito(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      Text(
+                        widget.item.dtcadastro,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: GoogleFonts.nunito(fontSize: 16.sp),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 24,
+                  ),
+                  Text(
+                    "Destinatários",
+                    style: GoogleFonts.nunito(
+                        fontSize: 20.sp, fontWeight: FontWeight.w700),
+                  ),
+                  SizedBox(
+                    height: 24,
+                  ),
+                  DestinatarioWidget(
+                    fluxo: widget.item,
+                  ),
+                ],
+              ),
             ),
-          ),
-          SizedBox(
-            height: 24.h,
-          ),
-        ],
+            SizedBox(
+              height: 24.h,
+            ),
+            Builder(
+              builder: (context) {
+                if (widget.item.desdocassinado != null &&
+                    widget.item.desdocassinado!.isNotEmpty) {
+                  return SizedBox(
+                    height: screenHeight * .8,
+                    child: Stack(
+                      children: [
+                        SfPdfViewer.network(
+                          maxZoomLevel: 6,
+                          onZoomLevelChanged: (pdfZoomDetails) {
+                            if (pdfZoomDetails.newZoomLevel > 1) {
+                              print("teco");
+                              _myHomePageController.changeScrollBehavior(
+                                ScrollBehavior().copyWith(
+                                  physics: BouncingScrollPhysics(
+                                    parent: NeverScrollableScrollPhysics(),
+                                  ),
+                                ),
+                              );
+                            } else {
+                              _myHomePageController.changeScrollBehavior(
+                                ScrollBehavior().copyWith(
+                                  physics: BouncingScrollPhysics(
+                                    parent: AlwaysScrollableScrollPhysics(),
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          onPageChanged: (details) {
+                            _myHomePageController
+                                .changeIsFirstPage(details.isFirstPage);
+                            _myHomePageController
+                                .changeIsLastPage(details.isLastPage);
+                          },
+                          scrollDirection: PdfScrollDirection.horizontal,
+                          widget.item.desdocassinado ?? "",
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            AnimatedBuilder(
+                                animation: _myHomePageController,
+                                builder: (context, child) {
+                                  if (!_myHomePageController.isFirstPage) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(left: 8),
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Transform.rotate(
+                                          angle: math.pi / 2,
+                                          child: AnimateIcon(
+                                            key: UniqueKey(),
+                                            onTap: () {},
+                                            iconType:
+                                                IconType.continueAnimation,
+                                            height: 70,
+                                            width: 70,
+                                            color: Colors.black,
+                                            animateIcon: AnimateIcons.downArrow,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    return SizedBox();
+                                  }
+                                }),
+                            AnimatedBuilder(
+                                animation: _myHomePageController,
+                                builder: (context, child) {
+                                  if (!_myHomePageController.isLastPage) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(right: 8),
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Transform.rotate(
+                                          angle: math.pi / -2,
+                                          child: AnimateIcon(
+                                            key: UniqueKey(),
+                                            onTap: () {},
+                                            iconType:
+                                                IconType.continueAnimation,
+                                            height: 70,
+                                            width: 70,
+                                            color: Colors.black,
+                                            animateIcon: AnimateIcons.downArrow,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    return SizedBox();
+                                  }
+                                }),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                } else {
+                  return Center(
+                    child: Text("Nenhum documento encontrado!"),
+                  );
+                }
+              },
+            ),
+          ],
+        ),
       );
     }
   }
