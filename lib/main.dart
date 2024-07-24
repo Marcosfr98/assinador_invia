@@ -1,10 +1,12 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:assinador_invia/firebase_options.dart';
 import 'package:assinador_invia/my_home_page/controllers/controllers.dart';
 import 'package:assinador_invia/my_home_page/models/type_variable.dart';
 import 'package:assinador_invia/my_home_page/services/local_db.dart';
-import 'package:assinador_invia/my_home_page/views/pages/pages.dart';
+import 'package:assinador_invia/my_login_page/Models/usuario.dart';
+import 'package:assinador_invia/my_login_page/views/pages/pages.dart';
 import 'package:assinador_invia/services/notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -20,7 +22,6 @@ import 'my_home_page/services/db.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final _myHomePageController = MyHomePageController.instance;
   final _localPersistance = LocalPersistence.instance;
   FirestoreServices _db = FirestoreServices.instance;
   await Firebase.initializeApp(
@@ -35,12 +36,6 @@ void main() async {
   };
   await _db.getKeys();
   await _localPersistance.initialize();
-  _myHomePageController.aguardandoInitialData = await _localPersistance.getData(
-          key: "aguardando", type: TypeVariable.int) ??
-      0;
-  _myHomePageController.pendenteInitialData = await _localPersistance.getData(
-          key: "pendentes", type: TypeVariable.int) ??
-      0;
   await LocalNotificationsService.instance.initialization();
   await FlutterDownloader.initialize(debug: true, ignoreSsl: true);
   runApp(
@@ -57,6 +52,18 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   MyHomePageController _myHomePageController = MyHomePageController.instance;
+  final _localPersistance = LocalPersistence.instance;
+  late UsuarioModel usuarioModel;
+
+  Future<void> getLoggedInUser() async {
+    usuarioModel = UsuarioModel.fromJson(
+      jsonDecode(
+        await _localPersistance.getData(
+            key: "usuarioLogado", type: TypeVariable.string),
+      ),
+    );
+    setState(() {});
+  }
 
   @override
   void initState() {
@@ -235,7 +242,7 @@ class _MyAppState extends State<MyApp> {
                     ),
                   ),
                 ),
-                home: MyHomePage(),
+                home: MyLoginPage(),
               );
             });
       },

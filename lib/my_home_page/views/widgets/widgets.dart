@@ -1,3 +1,5 @@
+import "dart:convert";
+
 import "package:assinador_invia/my_home_page/controllers/controllers.dart";
 import "package:assinador_invia/my_home_page/models/assinantes_fluxo_model.dart";
 import "package:assinador_invia/my_home_page/models/fluxos_aguardando.dart";
@@ -12,6 +14,7 @@ import "package:font_awesome_flutter/font_awesome_flutter.dart";
 import "package:get/get.dart";
 import "package:google_fonts/google_fonts.dart";
 import "package:shared_preferences/shared_preferences.dart";
+import "package:url_launcher/url_launcher.dart";
 
 class InicioWidget extends StatefulWidget {
   const InicioWidget({super.key});
@@ -1290,8 +1293,6 @@ class ListaDeDocumentos extends StatefulWidget {
 }
 
 class _ListaDeDocumentosState extends State<ListaDeDocumentos> {
-  final _myHomePageController = MyHomePageController.instance;
-
   @override
   void dispose() {
     super.dispose();
@@ -1310,54 +1311,84 @@ class _ListaDeDocumentosState extends State<ListaDeDocumentos> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  Wrap(
                     children: [
-                      Text(
-                        "Remetente: ",
-                        style: GoogleFonts.nunito(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      Text(
-                        widget.item.desnome ?? "",
+                      RichText(
+                        maxLines: 3,
                         overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: GoogleFonts.nunito(fontSize: 16.sp),
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: "Remetente: ",
+                              style: GoogleFonts.nunito(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.black,
+                              ),
+                            ),
+                            TextSpan(
+                              text: widget.item.desnome ?? "",
+                              style: GoogleFonts.nunito(
+                                fontSize: 16.sp,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                  Row(
+                  Wrap(
                     children: [
-                      Text(
-                        "Telefone: ",
-                        style: GoogleFonts.nunito(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      Text(
-                        widget.item.destelefone,
+                      RichText(
+                        maxLines: 3,
                         overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: GoogleFonts.nunito(fontSize: 16.sp),
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: "Telefone: ",
+                              style: GoogleFonts.nunito(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.black,
+                              ),
+                            ),
+                            TextSpan(
+                              text: widget.item.destelefone ?? "",
+                              style: GoogleFonts.nunito(
+                                fontSize: 16.sp,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                  Row(
+                  Wrap(
                     children: [
-                      Text(
-                        "E-mail: ",
-                        style: GoogleFonts.nunito(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      Text(
-                        widget.item.desemail,
+                      RichText(
+                        maxLines: 3,
                         overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: GoogleFonts.nunito(fontSize: 16.sp),
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: "E-mail: ",
+                              style: GoogleFonts.nunito(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.black,
+                              ),
+                            ),
+                            TextSpan(
+                              text: widget.item.desemail ?? "",
+                              style: GoogleFonts.nunito(
+                                fontSize: 16.sp,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -1372,17 +1403,316 @@ class _ListaDeDocumentosState extends State<ListaDeDocumentos> {
                   SizedBox(
                     height: 24,
                   ),
-                  DestinatarioWidget(
-                    fluxo: widget.item,
-                  ),
                 ],
               ),
+            ),
+            DestinatarioWidget(
+              fluxo: widget.item,
             ),
             Divider(
               height: 32,
               thickness: 1.r,
               color: Colors.black.withOpacity(.25),
             ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.r),
+              child: Column(
+                children: [
+                  Text(
+                    "Instruções para Assinar um Documento",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 22.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.h,
+                  ),
+                  Text(
+                    "Siga os passos abaixo para assinar um documento de forma rápida e segura:",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  RichText(
+                    textAlign: TextAlign.justify,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "1. Verifique os assinantes: ",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          ),
+                        ),
+                        TextSpan(
+                          text:
+                              "Antes de iniciar o processo, certifique-se de que todos os assinantes necessários estão presentes.",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.h,
+                  ),
+                  RichText(
+                    textAlign: TextAlign.justify,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "2. Veja o documento a ser assinado: ",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          ),
+                        ),
+                        TextSpan(
+                          text:
+                              "Leia o documento com atenção para garantir que você concorda com todos os termos.",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.h,
+                  ),
+                  RichText(
+                    textAlign: TextAlign.justify,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "3. Clique em \"Assinar Documento\": ",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          ),
+                        ),
+                        TextSpan(
+                          text:
+                              "No aplicativo, localize e clique no botão \"Assinar Documento\".",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.h,
+                  ),
+                  RichText(
+                    textAlign: TextAlign.justify,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "4. Abertura de link externo: ",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          ),
+                        ),
+                        TextSpan(
+                          text: "Um link externo será aberto automaticamente.",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.h,
+                  ),
+                  RichText(
+                    textAlign: TextAlign.justify,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "5. Clique no botão verde \"Assinar\": ",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          ),
+                        ),
+                        TextSpan(
+                          text:
+                              "No link externo, encontre e clique no botão verde com o texto \"Assinar\".",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.h,
+                  ),
+                  RichText(
+                    textAlign: TextAlign.justify,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "6. Insira o código e os dados solicitados: ",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          ),
+                        ),
+                        TextSpan(
+                          text:
+                              "Digite o código recebido e preencha os outros dados solicitados na página.",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.h,
+                  ),
+                  RichText(
+                    textAlign: TextAlign.justify,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "7. Documento assinado: ",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          ),
+                        ),
+                        TextSpan(
+                          text:
+                              "Após a inserção correta do código e dos dados, seu documento estará assinado.",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.h,
+                  ),
+                  Text(
+                    "O que acontece depois?",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.h,
+                  ),
+                  RichText(
+                    textAlign: TextAlign.justify,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Notificação aos outros assinantes: ",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          ),
+                        ),
+                        TextSpan(
+                          text:
+                              "Todos os outros assinantes receberão uma notificação informando que você assinou o documento.",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.h,
+                  ),
+                  RichText(
+                    textAlign: TextAlign.justify,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "Atualização de status do documento: ",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          ),
+                        ),
+                        TextSpan(
+                          text:
+                              "O documento sairá do fluxo de \"Aguardando\" e seguirá para a próxima etapa.",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 24.h,
+            ),
+            SafeArea(
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  try {
+                    String idHash = base64Encode(
+                      utf8.encode(widget.item.idassinatura),
+                    );
+                    await launchUrl(Uri.parse(
+                        "https://invianf.com.br/inviassinador/signatureDetails.php?code=$idHash"));
+                  } catch (e, stack) {
+                    print("$e\n$stack");
+                  }
+                },
+                label: Text("Link de assinatura"),
+                icon: FaIcon(FontAwesomeIcons.signature),
+              ),
+            )
           ],
         ),
       );
@@ -1468,114 +1798,146 @@ class _ListaDeDocumentosState extends State<ListaDeDocumentos> {
             SizedBox(
               height: 24.h,
             ),
-            Builder(
-              builder: (context) {
-                if (widget.item.desdocassinado != null &&
-                    widget.item.desdocassinado!.isNotEmpty) {
-                  return SizedBox(
-                    height: screenHeight * .8,
-                    child: Stack(
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24.r),
+              child: Column(
+                children: [
+                  Text(
+                    "Instruções para Enviar um Lembrete para os Usuários",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 22.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.h,
+                  ),
+                  Text(
+                    "Passo 1: Verifique os Assinantes",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  Text(
+                    "Antes de enviar os lembretes, é necessário verificar quais usuários ainda não assinaram o documento. Siga as instruções abaixo:",
+                    textAlign: TextAlign.justify,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 17.sp,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.h,
+                  ),
+                  Text(
+                    "Passo 2: Enviar Lembretes para Usuários Pendentes",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  Text(
+                    "Para garantir que todos os usuários pendentes sejam notificados, você precisa enviar um lembrete por e-mail e mensagem no WhatsApp. Siga os passos abaixo:",
+                    textAlign: TextAlign.justify,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 17.sp,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  Text(
+                    "1. Enviar lembrete: Clique no botão abaixo \“Enviar lembrete\”",
+                    style: GoogleFonts.montserrat(
+                      fontSize: 17.sp,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16.h,
+                  ),
+                  Text(
+                    "Passo 3: Receber Lembretes Quando os Usuários Assinarem",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18.sp,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8.h,
+                  ),
+                  Text(
+                    "Você será notificado via e-mail e WhatsApp quando os assinantes pendentes assinarem o documento. Não é necessário nenhuma ação adicional de sua parte para essa etapa. As notificações serão enviadas automaticamente.",
+                    textAlign: TextAlign.justify,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 17.sp,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  RichText(
+                    textAlign: TextAlign.justify,
+                    text: TextSpan(
                       children: [
-                        SfPdfViewer.network(
-                          maxZoomLevel: 6,
-                          onZoomLevelChanged: (pdfZoomDetails) {
-                            if (pdfZoomDetails.newZoomLevel > 1) {
-                              print("teco");
-                              _myHomePageController.changeScrollBehavior(
-                                ScrollBehavior().copyWith(
-                                  physics: BouncingScrollPhysics(
-                                    parent: NeverScrollableScrollPhysics(),
-                                  ),
-                                ),
-                              );
-                            } else {
-                              _myHomePageController.changeScrollBehavior(
-                                ScrollBehavior().copyWith(
-                                  physics: BouncingScrollPhysics(
-                                    parent: AlwaysScrollableScrollPhysics(),
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                          onPageChanged: (details) {
-                            _myHomePageController
-                                .changeIsFirstPage(details.isFirstPage);
-                            _myHomePageController
-                                .changeIsLastPage(details.isLastPage);
-                          },
-                          scrollDirection: PdfScrollDirection.horizontal,
-                          widget.item.desdocassinado ?? "",
+                        TextSpan(
+                          text: "1. Notificação por E-mail:",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            AnimatedBuilder(
-                                animation: _myHomePageController,
-                                builder: (context, child) {
-                                  if (!_myHomePageController.isFirstPage) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(left: 8),
-                                      child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Transform.rotate(
-                                          angle: math.pi / 2,
-                                          child: AnimateIcon(
-                                            key: UniqueKey(),
-                                            onTap: () {},
-                                            iconType:
-                                                IconType.continueAnimation,
-                                            height: 70,
-                                            width: 70,
-                                            color: Colors.black,
-                                            animateIcon: AnimateIcons.downArrow,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    return SizedBox();
-                                  }
-                                }),
-                            AnimatedBuilder(
-                                animation: _myHomePageController,
-                                builder: (context, child) {
-                                  if (!_myHomePageController.isLastPage) {
-                                    return Padding(
-                                      padding: const EdgeInsets.only(right: 8),
-                                      child: Align(
-                                        alignment: Alignment.centerRight,
-                                        child: Transform.rotate(
-                                          angle: math.pi / -2,
-                                          child: AnimateIcon(
-                                            key: UniqueKey(),
-                                            onTap: () {},
-                                            iconType:
-                                                IconType.continueAnimation,
-                                            height: 70,
-                                            width: 70,
-                                            color: Colors.black,
-                                            animateIcon: AnimateIcons.downArrow,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    return SizedBox();
-                                  }
-                                }),
-                          ],
+                        TextSpan(
+                          text:
+                              " Verifique sua caixa de entrada regularmente para notificações de assinatura. Você receberá um e-mail informando que o usuário pendente assinou o documento.",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
                         ),
                       ],
                     ),
-                  );
-                } else {
-                  return Center(
-                    child: Text("Nenhum documento encontrado!"),
-                  );
-                }
-              },
+                  ),
+                  SizedBox(height: 8.h),
+                  RichText(
+                    textAlign: TextAlign.justify,
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: "2. Notificação por WhatsApp:",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          ),
+                        ),
+                        TextSpan(
+                          text:
+                              " Certifique-se de que seu WhatsApp está ativo e acessível. Você receberá uma mensagem informando que o usuário pendente assinou o documento.",
+                          style: GoogleFonts.montserrat(
+                            fontSize: 17.sp,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

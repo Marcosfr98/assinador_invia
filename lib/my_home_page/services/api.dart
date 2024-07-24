@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:assinador_invia/my_home_page/controllers/controllers.dart';
 import 'package:assinador_invia/my_home_page/models/assinantes_fluxo_model.dart';
 import 'package:assinador_invia/my_home_page/models/fluxos_aguardando.dart';
 import 'package:assinador_invia/my_home_page/models/fluxos_finalizados.dart';
 import 'package:assinador_invia/my_home_page/models/fluxos_pendentes.dart';
 import 'package:assinador_invia/my_home_page/models/type_variable.dart';
+import 'package:assinador_invia/my_login_page/Models/usuario.dart';
 import 'package:flutter/material.dart';
 import "package:http/http.dart" as http;
 
@@ -18,14 +20,18 @@ class MyHomePageApiServices extends ChangeNotifier {
 
   Future<List<FluxoAguardandoModel>> getFluxosAguardando() async {
     try {
-      await _localPersistence.getData(
-          key: "aguardando", type: TypeVariable.int);
+      var usuario = await _localPersistence.getData(
+          key: "usuarioLogado", type: TypeVariable.string);
+      UsuarioModel usuarioModel = UsuarioModel.fromJson(jsonDecode(usuario));
+      MyHomePageController.instance.aguardandoInitialData =
+          await _localPersistence.getData(
+              key: "aguardando", type: TypeVariable.int);
       final endpoint = Uri.parse(
           'https://invianf.com.br/ws/appAssinador/aguardandoAssinatura.php');
       final payload = jsonEncode(
         {
           "apiPassword": "4pZqfXa3r88SW3aPr",
-          "userCPF": "86521551000",
+          "userCPF": usuarioModel.cpf,
         },
       );
       http.Response response = await http.post(endpoint, body: payload);
@@ -54,11 +60,16 @@ class MyHomePageApiServices extends ChangeNotifier {
 
   Future<List<FluxosPendentesModel>> getFluxosPendentes() async {
     try {
-      await _localPersistence.getData(key: "pendentes", type: TypeVariable.int);
+      var usuario = await _localPersistence.getData(
+          key: "usuarioLogado", type: TypeVariable.string);
+      UsuarioModel usuarioModel = UsuarioModel.fromJson(jsonDecode(usuario));
+      MyHomePageController.instance.pendenteInitialData =
+          await _localPersistence.getData(
+              key: "pendentes", type: TypeVariable.int);
       final endpoint = Uri.parse(
           'https://invianf.com.br/ws/appAssinador/fluxosPendentes.php');
       final payload = jsonEncode(
-        {"apiPassword": "4pZqfXa3r88SW3aPr", "idUser": 7},
+        {"apiPassword": "4pZqfXa3r88SW3aPr", "idUser": usuarioModel.userID},
       );
       http.Response response = await http.post(endpoint, body: payload);
       if (response.statusCode == 200) {
@@ -76,7 +87,13 @@ class MyHomePageApiServices extends ChangeNotifier {
         );
         return fluxosPendentesModel;
       } else {
+        await _localPersistence.setData(
+          key: "pendentes",
+          type: TypeVariable.int,
+          value: 0,
+        );
         print("Não foi possível recuperar os dados!");
+        return [];
       }
     } catch (e, stackTrace) {
       print("$e\n$stackTrace");
@@ -86,11 +103,14 @@ class MyHomePageApiServices extends ChangeNotifier {
 
   Future<List<FluxosFinalizadosModel>> getFluxosFinalizados() async {
     try {
+      var usuario = await _localPersistence.getData(
+          key: "usuarioLogado", type: TypeVariable.string);
+      UsuarioModel usuarioModel = UsuarioModel.fromJson(jsonDecode(usuario));
       await _localPersistence.getData(key: "pendentes", type: TypeVariable.int);
       final endpoint = Uri.parse(
           'https://invianf.com.br/ws/appAssinador/fluxosFinalizados.php');
       final payload = jsonEncode(
-        {"apiPassword": "4pZqfXa3r88SW3aPr", "idUser": "32"},
+        {"apiPassword": "4pZqfXa3r88SW3aPr", "idUser": usuarioModel.userID},
       );
       http.Response response = await http.post(endpoint, body: payload);
       if (response.statusCode == 200) {
